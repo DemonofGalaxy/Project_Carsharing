@@ -1,4 +1,35 @@
 package demonofgalaxy.project_carsharing.entity;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name="rentals")
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Rental {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id",nullable = false)
+    private User user;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="car_id",nullable = false)
+    private Car car;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private BigDecimal totalPrice;
+    @Enumerated(EnumType.STRING)
+    private RentalStatus status;
+    private Integer startMileage;
+    private Integer endMileage;
 }
