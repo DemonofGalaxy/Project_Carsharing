@@ -1,13 +1,13 @@
 package demonofgalaxy.project_carsharing.dto;
 
-import demonofgalaxy.project_carsharing.entity.CarStatus;
+import demonofgalaxy.project_carsharing.entity.Car.CarStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 
-public record CarResponseDto(
+public record CarDto(
         @NotBlank(message = "Brand is not supposed to be empty")
         String brand,
         @NotBlank(message = "Model is not supposed to be empty")

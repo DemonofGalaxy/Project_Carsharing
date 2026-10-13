@@ -1,4 +1,4 @@
-package demonofgalaxy.project_carsharing.entity;
+package demonofgalaxy.project_carsharing.entity.User;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class User {
     private String lastName;
     private int phone;
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private UserStatus userStatus;
     private boolean isActive;
     @CreationTimestamp
     @Column(updatable = false)

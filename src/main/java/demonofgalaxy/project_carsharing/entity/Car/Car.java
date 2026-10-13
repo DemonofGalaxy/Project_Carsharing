@@ -1,16 +1,14 @@
-package demonofgalaxy.project_carsharing.entity;
+package demonofgalaxy.project_carsharing.entity.Car;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "cars")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -33,5 +31,6 @@ public class Car {
     @Enumerated(EnumType.STRING)
     private CarStatus status;
     private boolean isActive=true;
+
 
 }
