@@ -1,6 +1,6 @@
 package demonofgalaxy.project_carsharing.service;
 
-import demonofgalaxy.project_carsharing.dto.CarDto;
+import demonofgalaxy.project_carsharing.dto.CarResponseDto;
 import demonofgalaxy.project_carsharing.entity.Car.Car;
 import demonofgalaxy.project_carsharing.entity.Car.CarStatus;
 import demonofgalaxy.project_carsharing.mapper.CarMapper;
@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,12 +18,12 @@ import java.util.Optional;
 public class CarService {
     private final CarRepository carRepository;
     private final CarMapper carMapper;
-    public final List<CarDto> getAvailableCars(){
+    public final List<CarResponseDto> getAvailableCars(){
     List<Car> cars=carRepository.findAllByStatus(CarStatus.AVAILABLE);
     return cars.stream().map(carMapper::toDto).toList();
     }
 
-    public final List<CarDto> getAllCars(){
+    public final List<CarResponseDto> getAllCars(){
         List<Car> cars=carRepository.findAll();
         return cars.stream().map(carMapper::toDto).toList();
     }
