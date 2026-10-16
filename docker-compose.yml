@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres_carsharing-db:
+    image: postgres:16-alpine
+    container_name: carsharing-db
+    environment:
+      POSTGRES_DB: bank_database
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: MeiN_HErz_BRennt
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
