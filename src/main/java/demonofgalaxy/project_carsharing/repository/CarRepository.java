@@ -15,5 +15,4 @@ public interface CarRepository extends JpaRepository<Car,Long> {
 
     boolean existsByPlateNumber(String plateNumber);
 
-    Car findById(Long id, Pageable pageable);
 }

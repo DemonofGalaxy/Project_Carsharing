@@ -26,8 +26,9 @@ public class Car {
     private BigDecimal pricePerMinute;
     private Integer fuelLevel;
     private Integer mileAge;
-    private Double latitude;
-    private Double longitude;
+    private String location;
+//    private Double latitude;
+//    private Double longitude;
     @Enumerated(EnumType.STRING)
     private CarStatus status;
     private boolean isActive=true;
