@@ -24,7 +24,7 @@ public class User {
     private String password;
     private String firstname;
     private String lastName;
-    private int phone;
+    private String phone;
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
     private boolean isActive;

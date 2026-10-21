@@ -2,7 +2,10 @@ package demonofgalaxy.project_carsharing.config;
 
 import demonofgalaxy.project_carsharing.entity.Car.Car;
 import demonofgalaxy.project_carsharing.entity.Car.CarStatus;
+import demonofgalaxy.project_carsharing.entity.User.User;
+import demonofgalaxy.project_carsharing.entity.User.UserStatus;
 import demonofgalaxy.project_carsharing.repository.CarRepository;
+import demonofgalaxy.project_carsharing.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -16,6 +19,7 @@ import java.util.List;
 @Slf4j
 public class DataInititalizer implements CommandLineRunner {
     private final CarRepository carRepository;
+    private final UserRepository userRepository;
 @Override
 public void run(String... args) throws Exception{
     if(carRepository.count()==0){
@@ -67,6 +71,19 @@ public void run(String... args) throws Exception{
                 .status(CarStatus.MAINTENANCE)
                 .isActive(true)
                 .build();
+
+        User user1=User.builder()
+                .username("client1")
+                .password("12345")
+                .firstname("Ivan")
+                .lastName("Иванов")
+                .phone("375191234567")
+                .userStatus(UserStatus.ROLE_CLIENT)
+                .isActive(true)
+                .build();
+
+        userRepository.save(user1);
+        log.info("Test user created ID: {}", user1.getId());
         carRepository.saveAll(List.of(car1,car2,car3,car4));
         log.info("Демонстрационные автомобили успешно загружены в базу данных: {} шт.", carRepository.count());
     }

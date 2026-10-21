@@ -3,10 +3,7 @@ package demonofgalaxy.project_carsharing.entity.Rental;
 import demonofgalaxy.project_carsharing.entity.Car.Car;
 import demonofgalaxy.project_carsharing.entity.User.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name="rentals")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
