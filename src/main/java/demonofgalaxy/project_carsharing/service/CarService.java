@@ -1,8 +1,8 @@
 package demonofgalaxy.project_carsharing.service;
 
 import demonofgalaxy.project_carsharing.dto.CarResponseDto;
-import demonofgalaxy.project_carsharing.entity.Car.Car;
-import demonofgalaxy.project_carsharing.entity.Car.CarStatus;
+import demonofgalaxy.project_carsharing.entity.car.Car;
+import demonofgalaxy.project_carsharing.entity.car.CarStatus;
 import demonofgalaxy.project_carsharing.mapper.CarMapper;
 import demonofgalaxy.project_carsharing.repository.CarRepository;
 import jakarta.persistence.EntityNotFoundException;

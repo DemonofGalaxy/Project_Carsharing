@@ -1,4 +1,4 @@
-package demonofgalaxy.project_carsharing.entity.User;
+package demonofgalaxy.project_carsharing.entity.user;
 
 public enum UserStatus {
     ROLE_CLIENT,

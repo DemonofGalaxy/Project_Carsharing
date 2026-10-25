@@ -1,8 +1,7 @@
 package demonofgalaxy.project_carsharing.repository;
 
-import demonofgalaxy.project_carsharing.entity.Car.Car;
-import demonofgalaxy.project_carsharing.entity.Car.CarStatus;
-import org.springframework.data.domain.Pageable;
+import demonofgalaxy.project_carsharing.entity.car.Car;
+import demonofgalaxy.project_carsharing.entity.car.CarStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package demonofgalaxy.project_carsharing.entity.Car;
+package demonofgalaxy.project_carsharing.entity.car;
 
 public enum CarStatus {
     AVAILABLE,

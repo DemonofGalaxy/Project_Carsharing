@@ -1,4 +1,4 @@
-package demonofgalaxy.project_carsharing.entity.Car;
+package demonofgalaxy.project_carsharing.entity.car;
 
 import jakarta.persistence.*;
 import lombok.*;

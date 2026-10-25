@@ -25,7 +25,7 @@ public class CarController {
     log.info("GET /api/cars/available - запрос каталога свободных авто");
     List<CarResponseDto> availableCars=carService.getAvailableCars();
     return ResponseEntity.ok(availableCars);
-
 }
+
 
 }

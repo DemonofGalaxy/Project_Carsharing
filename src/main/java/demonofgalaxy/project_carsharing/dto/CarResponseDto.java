@@ -1,6 +1,6 @@
 package demonofgalaxy.project_carsharing.dto;
 
-import demonofgalaxy.project_carsharing.entity.Car.CarStatus;
+import demonofgalaxy.project_carsharing.entity.car.CarStatus;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;

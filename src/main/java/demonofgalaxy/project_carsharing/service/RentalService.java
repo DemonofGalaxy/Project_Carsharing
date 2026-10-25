@@ -1,11 +1,10 @@
 package demonofgalaxy.project_carsharing.service;
 
-import demonofgalaxy.project_carsharing.entity.Car.Car;
-import demonofgalaxy.project_carsharing.entity.Car.CarStatus;
-import demonofgalaxy.project_carsharing.entity.Rental.Rental;
-import demonofgalaxy.project_carsharing.entity.Rental.RentalStatus;
-import demonofgalaxy.project_carsharing.entity.User.User;
-import demonofgalaxy.project_carsharing.entity.User.UserStatus;
+import demonofgalaxy.project_carsharing.entity.car.Car;
+import demonofgalaxy.project_carsharing.entity.car.CarStatus;
+import demonofgalaxy.project_carsharing.entity.rental.Rental;
+import demonofgalaxy.project_carsharing.entity.rental.RentalStatus;
+import demonofgalaxy.project_carsharing.entity.user.User;
 import demonofgalaxy.project_carsharing.repository.CarRepository;
 import demonofgalaxy.project_carsharing.repository.RentalRepository;
 import demonofgalaxy.project_carsharing.repository.UserRepository;
@@ -13,7 +12,6 @@ import demonofgalaxy.project_carsharing.service.strategy.TariffCalculatorStrateg
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -35,10 +33,10 @@ public class RentalService {
     public Rental startRental(Long userId,Long carId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with id:" + userId + " not found"));
         if (!user.isActive()) throw new IllegalStateException("Status is wrong");
-        Rental rental = rentalRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Rental"));
-        if (rental.getStatus() == RentalStatus.ACTIVE) throw new IllegalStateException("The user has an active rental");
-        Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("the car is not found"));
-        if (car.getStatus() == CarStatus.AVAILABLE) throw new IllegalStateException("Car is unavailable");
+        if (rentalRepository.findAllByUserIdAndStatus(userId, RentalStatus.ACTIVE).isPresent()) {
+            throw new IllegalStateException("The user has an active rental");
+        }        Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("the car is not found"));
+        if (car.getStatus() == CarStatus.IN_USE) throw new IllegalStateException("Car is unavailable");
         car.setStatus(CarStatus.IN_USE);
         carRepository.save(car);
         Rental rentalBuilder = Rental.builder()

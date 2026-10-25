@@ -1,4 +1,4 @@
-package demonofgalaxy.project_carsharing.entity.Rental;
+package demonofgalaxy.project_carsharing.entity.rental;
 
 public enum RentalStatus {
     ACTIVE,

@@ -1,7 +1,7 @@
 package demonofgalaxy.project_carsharing.repository;
 
-import demonofgalaxy.project_carsharing.entity.User.UserStatus;
-import demonofgalaxy.project_carsharing.entity.User.User;
+import demonofgalaxy.project_carsharing.entity.user.UserStatus;
+import demonofgalaxy.project_carsharing.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
