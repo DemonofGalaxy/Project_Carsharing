@@ -30,7 +30,7 @@ public class RentalService {
     private final RentalRepository rentalRepository;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
-    private final Map<String,TariffCalculatorStrategy> strategies;
+    private final Map<String, TariffCalculatorStrategy> strategies;
     private final RentalMapper rentalMapper;
 
     @Transactional
@@ -39,7 +39,8 @@ public class RentalService {
         if (!user.isActive()) throw new IllegalStateException("Status is wrong");
         if (rentalRepository.findAllByUserIdAndStatus(userId, RentalStatus.ACTIVE).isPresent()) {
             throw new IllegalStateException("The user has an active rental");
-        }        Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("the car is not found"));
+        }
+        Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("the car is not found"));
         if (car.getStatus() == CarStatus.IN_USE) throw new IllegalStateException("Car is unavailable");
         car.setStatus(CarStatus.IN_USE);
         carRepository.save(car);
@@ -55,31 +56,31 @@ public class RentalService {
     }
 
     @Transactional
-    public RentalResponseDto endRental(Long rentalId, String tariffName){
-        Rental rentalFind=rentalRepository.findById(rentalId).orElseThrow(()->new NoSuchElementException("Rental is not found"));
-        if(rentalFind.getStatus()!=RentalStatus.ACTIVE) throw new IllegalArgumentException("The rental is over yet");
-        LocalDateTime endTime=LocalDateTime.now();
-        long realTime= Duration.between(rentalFind.getStartTime(),endTime).toMinutes();
-        TariffCalculatorStrategy strategy=strategies.get(tariffName);
-        if (strategy==null) throw new IllegalArgumentException("Unknown strategy");
-        BigDecimal check=strategy.finalPrice(rentalFind.getCar().getPricePerMinute(),realTime);
+    public RentalResponseDto endRental(Long rentalId, String tariffName) {
+        Rental rentalFind = rentalRepository.findById(rentalId).orElseThrow(() -> new NoSuchElementException("Rental is not found"));
+        if (rentalFind.getStatus() != RentalStatus.ACTIVE) throw new IllegalArgumentException("The rental is over yet");
+        LocalDateTime endTime = LocalDateTime.now();
+        long realTime = Duration.between(rentalFind.getStartTime(), endTime).toMinutes();
+        TariffCalculatorStrategy strategy = strategies.get(tariffName);
+        if (strategy == null) throw new IllegalArgumentException("Unknown strategy");
+        BigDecimal check = strategy.finalPrice(rentalFind.getCar().getPricePerMinute(), realTime);
         rentalFind.setEndTime(endTime);
         rentalFind.setTotalPrice(check);
         rentalFind.setStatus(RentalStatus.COMPLETED);
-        Car car=rentalFind.getCar();
+        Car car = rentalFind.getCar();
         car.setStatus(CarStatus.AVAILABLE);
         carRepository.save(car);
-        Rental rentalSave=rentalRepository.save(rentalFind);
-        log.info("Rent ID={} is completed. The final cost: {} bel rub",rentalId,check);
+        Rental rentalSave = rentalRepository.save(rentalFind);
+        log.info("Rent ID={} is completed. The final cost: {} bel rub", rentalId, check);
         return rentalMapper.toDto(rentalSave);
     }
 
-    public List<RentalResponseDto> getHistoryByUserId(Long userId){
-        User user=userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
-        List<Rental> rentalHistory=rentalRepository.findAllByUserIdOrderByStartTimeDesc(userId);
+    @Transactional
+    public List<RentalResponseDto> getHistoryByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User with id:" + userId + " not found"));
+        List<Rental> rentalHistory = rentalRepository.findAllByUserIdOrderByStartTimeDesc(userId);
         return rentalHistory.stream().map(rentalMapper::toDto).toList();
     }
-
 
 
 }

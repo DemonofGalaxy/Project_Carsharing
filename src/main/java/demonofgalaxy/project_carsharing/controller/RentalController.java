@@ -34,7 +34,7 @@ public class RentalController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<RentalResponseDto>> getRentalHistory(@PathVariable Long userId){
-        List<RentalResponseDto> getRentals=rentalService.getHistoryByUserId(userId);
-       return ResponseEntity.ok(getRentals);
+        List<RentalResponseDto> history=rentalService.getHistoryByUserId(userId);
+       return ResponseEntity.ok(history);
     }
 }

@@ -1,14 +1,16 @@
 package demonofgalaxy.project_carsharing.controller;
 
+import demonofgalaxy.project_carsharing.dto.CarCreateDto;
 import demonofgalaxy.project_carsharing.dto.CarResponseDto;
+import demonofgalaxy.project_carsharing.entity.car.Car;
 import demonofgalaxy.project_carsharing.service.CarService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,5 +29,22 @@ public class CarController {
     return ResponseEntity.ok(availableCars);
 }
 
+@GetMapping("")
+    public ResponseEntity<List<CarResponseDto>> getAllCars(){
+    List<CarResponseDto> allCars=carService.getAllCars();
+    return ResponseEntity.ok(allCars);
+}
 
+@GetMapping("/{carId}")
+    public ResponseEntity<CarResponseDto> getCarById(@PathVariable Long carId){
+    CarResponseDto car=carService.getCarById(carId);
+    return ResponseEntity.ok(car);
+}
+
+@PostMapping("")
+    public ResponseEntity<CarResponseDto> createCar(@RequestParam @Valid CarCreateDto dto){
+    CarResponseDto createDto=carService.addCar(dto);
+    return ResponseEntity.status(HttpStatus.CREATED)
+            .body(createDto);
+}
 }

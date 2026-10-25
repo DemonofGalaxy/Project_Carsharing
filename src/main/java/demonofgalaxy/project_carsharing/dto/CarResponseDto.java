@@ -25,6 +25,8 @@ public record CarResponseDto(
 //        Double longitude,
         @NotBlank(message = "Location is not supposed to be empty")
         String location,
-        CarStatus status
+        CarStatus status,
+        Integer mileAge,
+        Boolean isActive
         ) {
 }
