@@ -31,7 +31,7 @@ public class Car {
 //    private Double longitude;
     @Enumerated(EnumType.STRING)
     private CarStatus status;
-    private boolean isActive=true;
+    private boolean isActive;
 
 
 }
