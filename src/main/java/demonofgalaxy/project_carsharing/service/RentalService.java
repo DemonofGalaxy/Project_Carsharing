@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -72,6 +73,13 @@ public class RentalService {
         log.info("Rent ID={} is completed. The final cost: {} bel rub",rentalId,check);
         return rentalMapper.toDto(rentalSave);
     }
+
+    public List<RentalResponseDto> getHistoryByUserId(Long userId){
+        User user=userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        List<Rental> rentalHistory=rentalRepository.findAllByUserIdOrderByStartTimeDesc(userId);
+        return rentalHistory.stream().map(rentalMapper::toDto).toList();
+    }
+
 
 
 }
