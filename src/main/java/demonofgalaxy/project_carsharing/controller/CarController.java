@@ -44,7 +44,7 @@ public class CarController {
 }
 
 @PostMapping("")
-    public ResponseEntity<CarResponseDto> createCar(@RequestParam @Valid CarCreateDto dto){
+    public ResponseEntity<CarResponseDto> createCar(@RequestBody @Valid CarCreateDto dto){
     CarResponseDto createDto=carService.addCar(dto);
     return ResponseEntity.status(HttpStatus.CREATED)
             .body(createDto);
