@@ -1,4 +1,4 @@
-package demonofgalaxy.project_carsharing.service.strategy;
+package demonofgalaxy.project_carsharing.strategy;
 
 import java.math.BigDecimal;
 

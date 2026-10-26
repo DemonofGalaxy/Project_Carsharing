@@ -1,6 +1,7 @@
 package demonofgalaxy.project_carsharing.service;
 
 import demonofgalaxy.project_carsharing.dto.CarCreateDto;
+import demonofgalaxy.project_carsharing.dto.CarMileAgeUpdateDto;
 import demonofgalaxy.project_carsharing.dto.CarResponseDto;
 import demonofgalaxy.project_carsharing.dto.CarStatusUpdateDto;
 import demonofgalaxy.project_carsharing.entity.car.Car;
@@ -25,15 +26,15 @@ public class CarService {
     private final CarMapper carMapper;
     public final List<CarResponseDto> getAvailableCars(){
     List<Car> cars=carRepository.findAllByStatus(CarStatus.AVAILABLE);
-    return cars.stream().map(carMapper::toDto).toList();
+    return cars.stream().filter(car -> car.getIsActive()==true).map(carMapper::toDto).toList();
     }
 
     public final List<CarResponseDto> getAllCars(){
         List<Car> cars=carRepository.findAll();
         return cars.stream().map(carMapper::toDto).toList();
     }
-
-    public final CarResponseDto updateCarStatus(Long carId, CarStatusUpdateDto newStatus){
+@Transactional
+    public CarResponseDto updateCarStatus(Long carId, CarStatusUpdateDto newStatus){
         CarStatus status=newStatus.status();
         Car car=carRepository.findById(carId).orElseThrow(()->new EntityNotFoundException("Impossible to find the object with id: "+carId));
         if(!car.getIsActive()) throw new IllegalStateException("The car isn`t active");
@@ -55,5 +56,26 @@ public class CarService {
         carRepository.save(car);
         return carMapper.toDto(car);
     }
+
+    @Transactional
+    public CarResponseDto updateMileage(Long carId, CarMileAgeUpdateDto mileAge){
+        Car car=carRepository.findById(carId).orElseThrow(()->new NoSuchElementException("Car with id: "+carId+"don`t exist"));
+        if(!car.getIsActive()) throw new IllegalStateException("Wrong status");
+        Integer mileage=mileAge.mileAge();
+        if(mileage<=car.getMileAge()) throw new IllegalArgumentException("A new mileage must be more than old");
+        carRepository.save(car);
+        return carMapper.toDto(car);
+    }
+
+    public CarResponseDto deactivateCar(Long carId){
+        Car car=carRepository.findById(carId).orElseThrow(()->new NoSuchElementException("Car with id:"+carId+" not found"));
+        if(car.getStatus()==CarStatus.IN_USE) throw new IllegalStateException("Car is working");
+        car.setIsActive(false);
+        car.setStatus(CarStatus.BLOCKED);
+        carRepository.save(car);
+        return carMapper.toDto(car);
+    }
+
+
 
 }

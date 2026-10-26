@@ -1,6 +1,7 @@
 package demonofgalaxy.project_carsharing.controller;
 
 import demonofgalaxy.project_carsharing.dto.CarCreateDto;
+import demonofgalaxy.project_carsharing.dto.CarMileAgeUpdateDto;
 import demonofgalaxy.project_carsharing.dto.CarResponseDto;
 import demonofgalaxy.project_carsharing.dto.CarStatusUpdateDto;
 import demonofgalaxy.project_carsharing.entity.car.Car;
@@ -52,6 +53,18 @@ public class CarController {
 @PatchMapping("/{carId}/status")
     public ResponseEntity<CarResponseDto> updateCarStatus(@PathVariable Long carId, @RequestBody CarStatusUpdateDto statusUpdateDto){
     CarResponseDto carDto=carService.updateCarStatus(carId,statusUpdateDto);
+    return ResponseEntity.ok(carDto);
+}
+
+@PatchMapping("/{carId}/mileage")
+    public ResponseEntity<CarResponseDto> updateMileage(@PathVariable Long carId, @RequestBody CarMileAgeUpdateDto mileAge){
+    CarResponseDto carDto=carService.updateMileage(carId,mileAge);
+    return ResponseEntity.ok(carDto);
+}
+
+@PatchMapping("/{carId}/deactivate")
+    public ResponseEntity<CarResponseDto> deactivateCar(@PathVariable Long carId){
+    CarResponseDto carDto=carService.deactivateCar(carId);
     return ResponseEntity.ok(carDto);
 }
 }

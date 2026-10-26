@@ -8,7 +8,7 @@ import demonofgalaxy.project_carsharing.entity.user.User;
 import demonofgalaxy.project_carsharing.repository.CarRepository;
 import demonofgalaxy.project_carsharing.repository.RentalRepository;
 import demonofgalaxy.project_carsharing.repository.UserRepository;
-import demonofgalaxy.project_carsharing.service.strategy.TariffCalculatorStrategy;
+import demonofgalaxy.project_carsharing.strategy.TariffCalculatorStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

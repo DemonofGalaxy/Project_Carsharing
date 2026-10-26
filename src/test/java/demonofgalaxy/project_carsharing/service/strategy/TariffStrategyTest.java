@@ -1,5 +1,7 @@
 package demonofgalaxy.project_carsharing.service.strategy;
 
+import demonofgalaxy.project_carsharing.strategy.DiscountTariffStrategy;
+import demonofgalaxy.project_carsharing.strategy.MinuteTariffStrategy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

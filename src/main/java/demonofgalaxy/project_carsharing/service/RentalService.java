@@ -10,7 +10,7 @@ import demonofgalaxy.project_carsharing.mapper.RentalMapper;
 import demonofgalaxy.project_carsharing.repository.CarRepository;
 import demonofgalaxy.project_carsharing.repository.RentalRepository;
 import demonofgalaxy.project_carsharing.repository.UserRepository;
-import demonofgalaxy.project_carsharing.service.strategy.TariffCalculatorStrategy;
+import demonofgalaxy.project_carsharing.strategy.TariffCalculatorStrategy;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,8 @@ public class RentalService {
             throw new IllegalStateException("The user has an active rental");
         }
         Car car = carRepository.findById(carId).orElseThrow(() -> new NoSuchElementException("the car is not found"));
-        if (car.getStatus() == CarStatus.IN_USE) throw new IllegalStateException("Car is unavailable");
+        if(!car.getIsActive()) throw new IllegalStateException("Car is blocked");
+        if(car.getStatus()!=CarStatus.AVAILABLE) throw new IllegalStateException("Car isn`t available");
         car.setStatus(CarStatus.IN_USE);
         carRepository.save(car);
         Rental rentalBuilder = Rental.builder()
