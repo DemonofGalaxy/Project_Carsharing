@@ -161,3 +161,8 @@
 2026-10-26T01:44:31.831+03:00  INFO 16344 --- [project_carsharing] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
 2026-10-26T01:44:31.832+03:00  INFO 16344 --- [project_carsharing] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
 2026-10-26T01:44:31.833+03:00  INFO 16344 --- [project_carsharing] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-10-26T02:43:44.604+03:00  INFO 16344 --- [project_carsharing] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-10-26T02:43:44.620+03:00  INFO 16344 --- [project_carsharing] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-10-26T02:43:44.625+03:00  INFO 16344 --- [project_carsharing] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-10-26T02:43:44.629+03:00  INFO 16344 --- [project_carsharing] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-10-26T02:43:44.634+03:00  INFO 16344 --- [project_carsharing] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

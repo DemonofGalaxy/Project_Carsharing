@@ -2,6 +2,7 @@ package demonofgalaxy.project_carsharing.controller;
 
 import demonofgalaxy.project_carsharing.dto.CarCreateDto;
 import demonofgalaxy.project_carsharing.dto.CarResponseDto;
+import demonofgalaxy.project_carsharing.dto.CarStatusUpdateDto;
 import demonofgalaxy.project_carsharing.entity.car.Car;
 import demonofgalaxy.project_carsharing.service.CarService;
 import jakarta.validation.Valid;
@@ -46,5 +47,11 @@ public class CarController {
     CarResponseDto createDto=carService.addCar(dto);
     return ResponseEntity.status(HttpStatus.CREATED)
             .body(createDto);
+}
+
+@PatchMapping("/{carId}/status")
+    public ResponseEntity<CarResponseDto> updateCarStatus(@PathVariable Long carId, @RequestBody CarStatusUpdateDto statusUpdateDto){
+    CarResponseDto carDto=carService.updateCarStatus(carId,statusUpdateDto);
+    return ResponseEntity.ok(carDto);
 }
 }

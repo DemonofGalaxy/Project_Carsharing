@@ -2,6 +2,7 @@ package demonofgalaxy.project_carsharing.service;
 
 import demonofgalaxy.project_carsharing.dto.CarCreateDto;
 import demonofgalaxy.project_carsharing.dto.CarResponseDto;
+import demonofgalaxy.project_carsharing.dto.CarStatusUpdateDto;
 import demonofgalaxy.project_carsharing.entity.car.Car;
 import demonofgalaxy.project_carsharing.entity.car.CarStatus;
 import demonofgalaxy.project_carsharing.mapper.CarMapper;
@@ -10,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,10 +33,14 @@ public class CarService {
         return cars.stream().map(carMapper::toDto).toList();
     }
 
-    public final void updateCarStatus(Long carId, CarStatus newStatus){
+    public final CarResponseDto updateCarStatus(Long carId, CarStatusUpdateDto newStatus){
+        CarStatus status=newStatus.status();
         Car car=carRepository.findById(carId).orElseThrow(()->new EntityNotFoundException("Impossible to find the object with id: "+carId));
-        car.setStatus(newStatus);
+        if(!car.getIsActive()) throw new IllegalStateException("The car isn`t active");
+       if(status!=CarStatus.AVAILABLE && status!=CarStatus.MAINTENANCE && status!=CarStatus.BLOCKED) throw new IllegalStateException("Wrong status");
+        car.setStatus(status);
         carRepository.save(car);
+        return carMapper.toDto(car);
     }
 
     public final CarResponseDto getCarById(Long carId){
