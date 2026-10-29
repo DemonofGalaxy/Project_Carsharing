@@ -1,4 +1,4 @@
-package demonofgalaxy.project_carsharing.dto;
+package demonofgalaxy.project_carsharing.dto.car;
 
 import jakarta.validation.constraints.PositiveOrZero;
 

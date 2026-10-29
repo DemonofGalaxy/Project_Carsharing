@@ -1,6 +1,6 @@
 package demonofgalaxy.project_carsharing.config;
 
-import demonofgalaxy.project_carsharing.dto.ErrorResponseDto;
+import demonofgalaxy.project_carsharing.dto.error.ErrorResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

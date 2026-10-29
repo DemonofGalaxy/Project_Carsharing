@@ -1,4 +1,4 @@
-package demonofgalaxy.project_carsharing.dto;
+package demonofgalaxy.project_carsharing.dto.car;
 
 import demonofgalaxy.project_carsharing.entity.car.CarStatus;
 import jakarta.validation.constraints.*;

@@ -1,6 +1,6 @@
 package demonofgalaxy.project_carsharing.service;
 
-import demonofgalaxy.project_carsharing.dto.RentalResponseDto;
+import demonofgalaxy.project_carsharing.dto.rental.RentalResponseDto;
 import demonofgalaxy.project_carsharing.entity.car.Car;
 import demonofgalaxy.project_carsharing.entity.car.CarStatus;
 import demonofgalaxy.project_carsharing.entity.rental.Rental;

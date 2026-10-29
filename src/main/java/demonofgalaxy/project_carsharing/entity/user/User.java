@@ -20,7 +20,7 @@ public class User {
     private String username;
     @Column(nullable = false, length = 60)
     private String password;
-    private String firstname;
+    private String firstName;
     private String lastName;
     private String phone;
     @Enumerated(EnumType.STRING)

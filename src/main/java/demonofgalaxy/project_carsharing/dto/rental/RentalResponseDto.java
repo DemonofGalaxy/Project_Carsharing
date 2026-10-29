@@ -1,4 +1,4 @@
-package demonofgalaxy.project_carsharing.dto;
+package demonofgalaxy.project_carsharing.dto.rental;
 
 import demonofgalaxy.project_carsharing.entity.rental.RentalStatus;
 

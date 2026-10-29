@@ -9,6 +9,7 @@ import demonofgalaxy.project_carsharing.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -20,7 +21,9 @@ import java.util.List;
 public class DataInititalizer implements CommandLineRunner {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
-@Override
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
 public void run(String... args) throws Exception{
     if(carRepository.count()==0) {
         Car car1 = Car.builder()
@@ -78,8 +81,8 @@ public void run(String... args) throws Exception{
     if(userRepository.count()==0) {
         User user1 = User.builder()
                 .username("client1")
-                .password("12345")
-                .firstname("Ivan")
+                .password(passwordEncoder.encode("12345"))
+                .firstName("Ivan")
                 .lastName("Иванов")
                 .phone("375191234567")
                 .userStatus(UserStatus.ROLE_CLIENT)

@@ -1,9 +1,7 @@
 package demonofgalaxy.project_carsharing.mapper;
 
-import demonofgalaxy.project_carsharing.dto.RentalResponseDto;
-import demonofgalaxy.project_carsharing.entity.car.Car;
+import demonofgalaxy.project_carsharing.dto.rental.RentalResponseDto;
 import demonofgalaxy.project_carsharing.entity.rental.Rental;
-import demonofgalaxy.project_carsharing.entity.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

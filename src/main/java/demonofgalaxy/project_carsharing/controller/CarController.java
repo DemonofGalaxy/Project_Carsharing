@@ -1,14 +1,12 @@
 package demonofgalaxy.project_carsharing.controller;
 
-import demonofgalaxy.project_carsharing.dto.CarCreateDto;
-import demonofgalaxy.project_carsharing.dto.CarMileAgeUpdateDto;
-import demonofgalaxy.project_carsharing.dto.CarResponseDto;
-import demonofgalaxy.project_carsharing.dto.CarStatusUpdateDto;
-import demonofgalaxy.project_carsharing.entity.car.Car;
+import demonofgalaxy.project_carsharing.dto.car.CarCreateDto;
+import demonofgalaxy.project_carsharing.dto.car.CarMileAgeUpdateDto;
+import demonofgalaxy.project_carsharing.dto.car.CarResponseDto;
+import demonofgalaxy.project_carsharing.dto.car.CarStatusUpdateDto;
 import demonofgalaxy.project_carsharing.service.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

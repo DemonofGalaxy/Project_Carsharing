@@ -1,6 +1,6 @@
 package demonofgalaxy.project_carsharing.controller;
 
-import demonofgalaxy.project_carsharing.dto.RentalResponseDto;
+import demonofgalaxy.project_carsharing.dto.rental.RentalResponseDto;
 import demonofgalaxy.project_carsharing.service.RentalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
