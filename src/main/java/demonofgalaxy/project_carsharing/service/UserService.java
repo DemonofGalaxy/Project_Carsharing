@@ -1,6 +1,7 @@
 package demonofgalaxy.project_carsharing.service;
 
 import demonofgalaxy.project_carsharing.config.PasswordConfig;
+import demonofgalaxy.project_carsharing.dto.user.UserLoginDto;
 import demonofgalaxy.project_carsharing.dto.user.UserRegisterDto;
 import demonofgalaxy.project_carsharing.dto.user.UserResponseDto;
 import demonofgalaxy.project_carsharing.entity.user.User;
@@ -32,7 +33,7 @@ public class UserService {
         User user = userMapper.toEntity(dto);
         user.setPassword(passwordEncoder.encode(dto.password()));
         user.setUserStatus(UserStatus.ROLE_CLIENT);
-        user.setActive(true);
+        user.setIsActive(true);
         User savedUser = userRepository.save(user);
         log.info("Saved user with id={}, username={}", user.getId(), user.getUsername());
         return userMapper.toDto(savedUser);
@@ -49,7 +50,7 @@ public class UserService {
 
     public UserResponseDto deactivateUser(Long userId){
         User user=userRepository.findById(userId).orElseThrow(()->new NoSuchElementException("User not found with id: "+userId));
-        user.setActive(false);
+        user.setIsActive(false);
         userRepository.save(user);
         log.info("User with id={} deactivated",userId);
         return userMapper.toDto(user);
@@ -57,9 +58,25 @@ public class UserService {
 
     public UserResponseDto activateUser(Long userId){
         User user=userRepository.findById(userId).orElseThrow(()->new NoSuchElementException("User not found with id: "+userId));
-        user.setActive(true);
+        user.setIsActive(true);
         userRepository.save(user);
         log.info("User with id={} activated",userId);
+        return userMapper.toDto(user);
+    }
+
+    public UserResponseDto login(UserLoginDto dto) {
+        User user = userRepository.findByUsername(dto.username())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+
+        if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid username or password");
+        }
+
+        if (!user.getIsActive()) {
+            throw new IllegalStateException("User account is deactivated");
+        }
+
+        log.info("User ID={} ({}) successfully logged in", user.getId(), user.getUsername());
         return userMapper.toDto(user);
     }
 

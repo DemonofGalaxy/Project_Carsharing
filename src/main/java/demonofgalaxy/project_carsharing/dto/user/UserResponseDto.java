@@ -7,11 +7,11 @@ import java.time.LocalDateTime;
 public record UserResponseDto(
         Long id,
         String username,
-        String firstname,
+        String firstName,
         String lastName,
         String phone,
         UserStatus userStatus,
-        boolean isActive,
+        Boolean isActive,
         LocalDateTime createdAt
 ) {
 }

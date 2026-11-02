@@ -1,5 +1,6 @@
 package demonofgalaxy.project_carsharing.controller;
 
+import demonofgalaxy.project_carsharing.dto.user.UserLoginDto;
 import demonofgalaxy.project_carsharing.dto.user.UserRegisterDto;
 import demonofgalaxy.project_carsharing.dto.user.UserResponseDto;
 import demonofgalaxy.project_carsharing.entity.user.User;
@@ -47,6 +48,12 @@ public class UserController {
     @PatchMapping("/{userId}/activate")
     public ResponseEntity<UserResponseDto> activate(@PathVariable Long userId){
         return ResponseEntity.ok(userService.activateUser(userId));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDto> login(@RequestBody @Valid UserLoginDto dto) {
+        UserResponseDto response = userService.login(dto);
+        return ResponseEntity.ok(response);
     }
 
 
