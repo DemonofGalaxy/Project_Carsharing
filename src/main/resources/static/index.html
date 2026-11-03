@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS DRIVE — Carsharing</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- НАВИГАЦИОННАЯ ШАПКА -->
+<header class="navbar">
+    <div class="nav-brand">
+        <div class="brand-icon">⚡</div>
+        <span class="brand-name">NEXUS<span class="brand-accent">DRIVE</span></span>
+    </div>
+
+    <nav class="nav-links">
+        <button class="nav-btn active" onclick="switchTab('catalog')">Автопарк</button>
+        <button class="nav-btn" onclick="switchTab('history')">Мои поездки</button>
+        <button class="nav-btn manager-only" onclick="switchTab('maintenance')" id="nav-maint">Журнал ТО</button>
+        <button class="nav-btn manager-only" onclick="switchTab('analytics')" id="nav-anal">Аналитика</button>
+    </nav>
+
+    <div class="nav-user">
+        <div id="user-pill" class="user-pill hidden">
+            <span id="user-display-name">Водитель</span>
+            <span id="user-role-badge" class="badge">CLIENT</span>
+            <button class="logout-btn" onclick="logout()">✕</button>
+        </div>
+        <button id="login-open-btn" class="btn btn-primary" onclick="openAuthModal()">Войти</button>
+    </div>
+</header>
+
+<!-- ГЛАВНЫЙ КОНТЕЙНЕР -->
+<main class="container">
+
+    <!-- ПАНЕЛЬ АКТИВНОЙ ПОЕЗДКИ / БРОНИ (HUD) -->
+    <section id="active-rental-hud" class="active-hud hidden">
+        <div class="hud-glow"></div>
+        <div class="hud-content">
+            <div class="hud-status">
+                <span class="pulse-indicator"></span>
+                <span id="hud-status-title">ПОЕЗДКА АКТИВНА</span>
+            </div>
+            <div class="hud-car-info">
+                <h3 id="hud-car-name">Geely Coolray</h3>
+                <span id="hud-car-plate" class="plate-badge">1234 АВ-7</span>
+            </div>
+            <div class="hud-metrics">
+                <div class="metric-block">
+                    <span class="metric-label">Время</span>
+                    <span id="hud-timer" class="metric-value">00:00</span>
+                </div>
+                <div class="metric-block">
+                    <span class="metric-label">Текущий чек</span>
+                    <span id="hud-cost" class="metric-value text-accent">0.00 руб.</span>
+                </div>
+            </div>
+            <div class="hud-actions">
+                <button id="hud-action-btn" class="btn btn-danger" onclick="handleActiveAction()">Завершить поездку</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ВКЛАДКА 1: КАТАЛОГ МАШИН -->
+    <div id="tab-catalog" class="tab-content active">
+        <div class="section-header">
+            <div>
+                <h2>Доступный автопарк</h2>
+                <p class="subtitle">Выберите автомобиль для мгновенного бронирования или старта поездки</p>
+            </div>
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="filterCars('ALL')">Все</button>
+                <button class="filter-btn" onclick="filterCars('AVAILABLE')">Свободные</button>
+                <button class="filter-btn" onclick="filterCars('IN_USE')">В пути</button>
+            </div>
+        </div>
+
+        <div id="cars-grid" class="cars-grid">
+            <!-- Карточки авто рендерятся из app.js -->
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 2: ИСТОРИЯ ПОЕЗДОК -->
+    <div id="tab-history" class="tab-content">
+        <div class="section-header">
+            <h2>История ваших поездок</h2>
+            <p class="subtitle">Детализированный архив завершенных сессий и финансовых списаний</p>
+        </div>
+        <div class="table-card">
+            <table class="custom-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Автомобиль</th>
+                    <th>Старт</th>
+                    <th>Финиш</th>
+                    <th>Статус</th>
+                    <th>Стоимость</th>
+                </tr>
+                </thead>
+                <tbody id="history-tbody">
+                <!-- Строки истории рендерятся из app.js -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 3: ЖУРНАЛ ТО (МЕНЕДЖЕР) -->
+    <div id="tab-maintenance" class="tab-content">
+        <div class="section-header">
+            <h2>Журнал технического обслуживания</h2>
+            <button class="btn btn-primary" onclick="openMaintenanceModal()">+ Отправить авто на СТО</button>
+        </div>
+        <div class="table-card">
+            <table class="custom-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Авто</th>
+                    <th>Работы</th>
+                    <th>Стоимость</th>
+                    <th>Дата начала</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                </tr>
+                </thead>
+                <tbody id="maintenance-tbody">
+                <!-- Записи ТО рендерятся из app.js -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 4: АНАЛИТИКА -->
+    <div id="tab-analytics" class="tab-content">
+        <div class="section-header">
+            <h2>Экономический анализ автопарка</h2>
+            <p class="subtitle">Сводные показатели окупаемости, утилизации и финансового результата</p>
+        </div>
+        <div class="analytics-grid">
+            <div class="stat-card">
+                <span class="stat-icon">💰</span>
+                <span class="stat-title">Общая выручка</span>
+                <span id="stat-revenue" class="stat-value text-accent">0.00 руб.</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">📈</span>
+                <span class="stat-title">Чистая прибыль</span>
+                <span id="stat-profit" class="stat-value">0.00 руб.</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">⚡</span>
+                <span class="stat-title">Утилизация парка</span>
+                <span id="stat-utilization" class="stat-value text-accent">0%</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">🏆</span>
+                <span class="stat-title">Лидер по доходу</span>
+                <span id="stat-top-brand" class="stat-value">—</span>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- МОДАЛЬНОЕ ОКНО: АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ -->
+<div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <div class="modal-tabs">
+            <button id="auth-tab-login" class="modal-tab-btn active" onclick="switchAuthTab('login')">Вход</button>
+            <button id="auth-tab-register" class="modal-tab-btn" onclick="switchAuthTab('register')">Регистрация</button>
+        </div>
+
+        <!-- ФОРМА ВХОДА -->
+        <form id="form-login" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Имя пользователя</label>
+                <input type="text" id="login-username" required placeholder="Введите логин">
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" id="login-password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Войти в систему</button>
+        </form>
+
+        <!-- ФОРМА РЕГИСТРАЦИИ -->
+        <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label>Логин</label>
+                <input type="text" id="reg-username" required placeholder="Придумайте логин">
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" id="reg-password" required placeholder="••••••••">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Имя</label>
+                    <input type="text" id="reg-firstname" required placeholder="Иван">
+                </div>
+                <div class="form-group">
+                    <label>Фамилия</label>
+                    <input type="text" id="reg-lastname" required placeholder="Иванов">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Телефон</label>
+                <input type="text" id="reg-phone" required placeholder="+375 29 000-00-00">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
+        </form>
+
+        <button class="modal-close-btn" onclick="closeAuthModal()">✕</button>
+    </div>
+</div>
+
+<!-- ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ -->
+<div id="toast-container" class="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

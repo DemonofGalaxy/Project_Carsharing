@@ -55,3 +55,124 @@
 2026-11-03T00:48:38.488+03:00  INFO 3656 --- [project_carsharing] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-11-03T00:48:38.490+03:00  INFO 3656 --- [project_carsharing] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2026-11-03T00:48:38.492+03:00  INFO 3656 --- [project_carsharing] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-11-03T10:31:19.047+03:00  INFO 10124 --- [project_carsharing] [main] d.p.ProjectCarsharingApplication         : Starting ProjectCarsharingApplication using Java 21.0.8 with PID 10124 (D:\3 курс\1 семестр\Курсовой проект\код\project_carsharing\target\classes started by HP in D:\3 курс\1 семестр\Курсовой проект\код\project_carsharing)
+2026-11-03T10:31:19.052+03:00  INFO 10124 --- [project_carsharing] [main] d.p.ProjectCarsharingApplication         : No active profile set, falling back to 1 default profile: "default"
+2026-11-03T10:31:20.255+03:00  INFO 10124 --- [project_carsharing] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-03T10:31:20.366+03:00  INFO 10124 --- [project_carsharing] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 97 ms. Found 5 JPA repository interfaces.
+2026-11-03T10:31:21.023+03:00  INFO 10124 --- [project_carsharing] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-11-03T10:31:21.044+03:00  INFO 10124 --- [project_carsharing] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-11-03T10:31:21.044+03:00  INFO 10124 --- [project_carsharing] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-11-03T10:31:21.107+03:00  INFO 10124 --- [project_carsharing] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1974 ms
+2026-11-03T10:31:21.346+03:00  INFO 10124 --- [project_carsharing] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-03T10:31:21.428+03:00  INFO 10124 --- [project_carsharing] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.5.Final
+2026-11-03T10:31:21.954+03:00  INFO 10124 --- [project_carsharing] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-03T10:31:22.006+03:00  INFO 10124 --- [project_carsharing] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-03T10:31:22.203+03:00  INFO 10124 --- [project_carsharing] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@43f99817
+2026-11-03T10:31:22.205+03:00  INFO 10124 --- [project_carsharing] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-03T10:31:22.310+03:00  INFO 10124 --- [project_carsharing] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5433/bank_database]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.14
+	Default catalog/schema: bank_database/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-03T10:31:23.626+03:00  INFO 10124 --- [project_carsharing] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-03T10:31:23.770+03:00  INFO 10124 --- [project_carsharing] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-03T10:31:23.868+03:00  INFO 10124 --- [project_carsharing] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-03T10:31:24.279+03:00  WARN 10124 --- [project_carsharing] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-03T10:31:24.305+03:00  INFO 10124 --- [project_carsharing] [main] o.s.b.w.a.WelcomePageHandlerMapping      : Adding welcome page: class path resource [static/index.html]
+2026-11-03T10:31:24.753+03:00  INFO 10124 --- [project_carsharing] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-11-03T10:31:24.759+03:00  INFO 10124 --- [project_carsharing] [main] d.p.ProjectCarsharingApplication         : Started ProjectCarsharingApplication in 6.704 seconds (process running for 9.522)
+2026-11-03T10:32:14.214+03:00  INFO 10124 --- [project_carsharing] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-11-03T10:32:14.223+03:00  INFO 10124 --- [project_carsharing] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-11-03T10:32:14.228+03:00  INFO 10124 --- [project_carsharing] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-11-03T10:32:14.230+03:00  INFO 10124 --- [project_carsharing] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-11-03T10:32:14.242+03:00  INFO 10124 --- [project_carsharing] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-11-03T10:32:50.410+03:00  INFO 2488 --- [project_carsharing] [main] d.p.ProjectCarsharingApplication         : Starting ProjectCarsharingApplication using Java 21.0.8 with PID 2488 (D:\3 курс\1 семестр\Курсовой проект\код\project_carsharing\target\classes started by HP in D:\3 курс\1 семестр\Курсовой проект\код\project_carsharing)
+2026-11-03T10:32:50.416+03:00  INFO 2488 --- [project_carsharing] [main] d.p.ProjectCarsharingApplication         : No active profile set, falling back to 1 default profile: "default"
+2026-11-03T10:32:51.405+03:00  INFO 2488 --- [project_carsharing] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-03T10:32:51.520+03:00  INFO 2488 --- [project_carsharing] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 102 ms. Found 5 JPA repository interfaces.
+2026-11-03T10:32:52.116+03:00  INFO 2488 --- [project_carsharing] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-11-03T10:32:52.137+03:00  INFO 2488 --- [project_carsharing] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-11-03T10:32:52.137+03:00  INFO 2488 --- [project_carsharing] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-11-03T10:32:52.197+03:00  INFO 2488 --- [project_carsharing] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1717 ms
+2026-11-03T10:32:52.435+03:00  INFO 2488 --- [project_carsharing] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-03T10:32:52.512+03:00  INFO 2488 --- [project_carsharing] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.5.Final
+2026-11-03T10:32:53.184+03:00  INFO 2488 --- [project_carsharing] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-03T10:32:53.235+03:00  INFO 2488 --- [project_carsharing] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-03T10:32:53.419+03:00  INFO 2488 --- [project_carsharing] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2de7c84a
+2026-11-03T10:32:53.421+03:00  INFO 2488 --- [project_carsharing] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-03T10:32:53.515+03:00  INFO 2488 --- [project_carsharing] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5433/bank_database]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.14
+	Default catalog/schema: bank_database/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-03T10:32:54.737+03:00  INFO 2488 --- [project_carsharing] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-03T10:32:54.844+03:00  INFO 2488 --- [project_carsharing] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-03T10:32:54.933+03:00  INFO 2488 --- [project_carsharing] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-03T10:32:55.306+03:00  WARN 2488 --- [project_carsharing] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-03T10:32:55.326+03:00  INFO 2488 --- [project_carsharing] [main] o.s.b.w.a.WelcomePageHandlerMapping      : Adding welcome page: class path resource [static/index.html]
+2026-11-03T10:32:55.706+03:00  INFO 2488 --- [project_carsharing] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-11-03T10:32:55.711+03:00  INFO 2488 --- [project_carsharing] [main] d.p.ProjectCarsharingApplication         : Started ProjectCarsharingApplication in 5.976 seconds (process running for 7.26)
+2026-11-03T10:33:30.329+03:00  INFO 2488 --- [project_carsharing] [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-11-03T10:33:30.330+03:00  INFO 2488 --- [project_carsharing] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-11-03T10:33:30.331+03:00  INFO 2488 --- [project_carsharing] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-11-03T10:40:37.469+03:00  INFO 2488 --- [project_carsharing] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-11-03T10:40:37.478+03:00  INFO 2488 --- [project_carsharing] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-11-03T10:40:37.483+03:00  INFO 2488 --- [project_carsharing] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-11-03T10:40:37.488+03:00  INFO 2488 --- [project_carsharing] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-11-03T10:40:37.499+03:00  INFO 2488 --- [project_carsharing] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-11-03T10:42:27.420+03:00  INFO 8952 --- [project_carsharing] [main] d.p.ProjectCarsharingApplication         : Starting ProjectCarsharingApplication using Java 21.0.8 with PID 8952 (D:\3 курс\1 семестр\Курсовой проект\код\project_carsharing\target\classes started by HP in D:\3 курс\1 семестр\Курсовой проект\код\project_carsharing)
+2026-11-03T10:42:27.424+03:00  INFO 8952 --- [project_carsharing] [main] d.p.ProjectCarsharingApplication         : No active profile set, falling back to 1 default profile: "default"
+2026-11-03T10:42:28.408+03:00  INFO 8952 --- [project_carsharing] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-03T10:42:28.524+03:00  INFO 8952 --- [project_carsharing] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 102 ms. Found 5 JPA repository interfaces.
+2026-11-03T10:42:29.105+03:00  INFO 8952 --- [project_carsharing] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-11-03T10:42:29.127+03:00  INFO 8952 --- [project_carsharing] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-11-03T10:42:29.128+03:00  INFO 8952 --- [project_carsharing] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-11-03T10:42:29.203+03:00  INFO 8952 --- [project_carsharing] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1709 ms
+2026-11-03T10:42:29.552+03:00  INFO 8952 --- [project_carsharing] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-03T10:42:29.639+03:00  INFO 8952 --- [project_carsharing] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.5.Final
+2026-11-03T10:42:30.409+03:00  INFO 8952 --- [project_carsharing] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-03T10:42:30.468+03:00  INFO 8952 --- [project_carsharing] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-03T10:42:30.699+03:00  INFO 8952 --- [project_carsharing] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2cc34cd5
+2026-11-03T10:42:30.702+03:00  INFO 8952 --- [project_carsharing] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-03T10:42:30.862+03:00  INFO 8952 --- [project_carsharing] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5433/bank_database]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.14
+	Default catalog/schema: bank_database/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-03T10:42:32.914+03:00  INFO 8952 --- [project_carsharing] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-03T10:42:33.048+03:00  INFO 8952 --- [project_carsharing] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-03T10:42:33.166+03:00  INFO 8952 --- [project_carsharing] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-03T10:42:33.628+03:00  WARN 8952 --- [project_carsharing] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-11-03T10:42:33.651+03:00  INFO 8952 --- [project_carsharing] [main] o.s.b.w.a.WelcomePageHandlerMapping      : Adding welcome page: class path resource [static/index.html]
+2026-11-03T10:42:34.217+03:00  INFO 8952 --- [project_carsharing] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-11-03T10:42:34.224+03:00  INFO 8952 --- [project_carsharing] [main] d.p.ProjectCarsharingApplication         : Started ProjectCarsharingApplication in 7.491 seconds (process running for 8.531)
+2026-11-03T10:42:34.402+03:00  INFO 8952 --- [project_carsharing] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-11-03T10:42:34.403+03:00  INFO 8952 --- [project_carsharing] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-11-03T10:42:34.404+03:00  INFO 8952 --- [project_carsharing] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-11-03T10:43:10.770+03:00  INFO 8952 --- [project_carsharing] [http-nio-8080-exec-7] d.p.service.UserService                  : User ID=1 (client1) successfully logged in
+2026-11-03T10:46:20.062+03:00  INFO 8952 --- [project_carsharing] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-11-03T10:46:20.073+03:00  INFO 8952 --- [project_carsharing] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-11-03T10:46:20.080+03:00  INFO 8952 --- [project_carsharing] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-11-03T10:46:20.084+03:00  INFO 8952 --- [project_carsharing] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-11-03T10:46:20.094+03:00  INFO 8952 --- [project_carsharing] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
