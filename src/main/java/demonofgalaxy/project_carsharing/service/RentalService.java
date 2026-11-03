@@ -82,6 +82,7 @@ public class RentalService {
                 .car(car)
                 .startTime(LocalDateTime.now())
                 .status(RentalStatus.ACTIVE)
+                .startMileage(car.getMileAge() != null ? car.getMileAge() : 0)
                 .build();
 
         Rental savedRental = rentalRepository.save(rentalBuilder);
@@ -95,6 +96,8 @@ public class RentalService {
         if (rentalFind.getStatus() != RentalStatus.ACTIVE) throw new IllegalArgumentException("The rental is over yet");
         LocalDateTime endTime = LocalDateTime.now();
         long realTime = Duration.between(rentalFind.getStartTime(), endTime).toMinutes();
+
+        if(realTime<=0) realTime=1;
         TariffCalculatorStrategy strategy = strategies.get(tariffName);
         if (strategy == null) throw new IllegalArgumentException("Unknown strategy");
         BigDecimal check = strategy.finalPrice(rentalFind.getCar().getPricePerMinute(), realTime);
@@ -102,6 +105,13 @@ public class RentalService {
         rentalFind.setTotalPrice(check);
         rentalFind.setStatus(RentalStatus.COMPLETED);
         Car car = rentalFind.getCar();
+        int drivenKm = (int) Math.max(1, realTime);
+        int currentCarMileage = (car.getMileAge() != null) ? car.getMileAge() : 0;
+        int finalMileage = currentCarMileage + drivenKm;
+
+        car.setMileAge(finalMileage);
+
+        rentalFind.setEndMileage(finalMileage);
         car.setStatus(CarStatus.AVAILABLE);
         carRepository.save(car);
         Rental rentalSave = rentalRepository.save(rentalFind);
@@ -140,7 +150,8 @@ public class RentalService {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new NoSuchElementException("Car not found"));
         if (!car.getIsActive()) throw new IllegalStateException("Car is deactivated");
-        if (car.getStatus() != CarStatus.AVAILABLE) throw new IllegalStateException("Car is not available for reservation");
+        if (car.getStatus() != CarStatus.AVAILABLE)
+            throw new IllegalStateException("Car is not available for reservation");
 
         car.setStatus(CarStatus.RESERVED);
         carRepository.save(car);
@@ -180,8 +191,6 @@ public class RentalService {
         log.info("Reservation ID={} cancelled by user ID={}", rentalId, userId);
         return rentalMapper.toDto(saved);
     }
-
-
 
 
 }

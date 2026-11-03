@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS DRIVE — Carsharing</title>
+    <title>NEXUS DRIVE — Enterprise Carsharing</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- НАВИГАЦИОННАЯ ШАПКА -->
+<!-- ВЕРХНЯЯ ШАПКА -->
 <header class="navbar">
     <div class="nav-brand">
         <div class="brand-icon">⚡</div>
@@ -18,27 +18,36 @@
 
     <nav class="nav-links">
         <button class="nav-btn active" onclick="switchTab('catalog')">Автопарк</button>
-        <button class="nav-btn" onclick="switchTab('history')">Мои поездки</button>
-        <button class="nav-btn manager-only" onclick="switchTab('maintenance')" id="nav-maint">Журнал ТО</button>
-        <button class="nav-btn manager-only" onclick="switchTab('analytics')" id="nav-anal">Аналитика</button>
+        <button class="nav-btn auth-only" onclick="switchTab('profile')">Личный кабинет</button>
+
+        <!-- Вкладки Менеджера и Админа -->
+        <button class="nav-btn manager-only hidden" onclick="switchTab('fleet')">Диспетчер парка</button>
+        <button class="nav-btn manager-only hidden" onclick="switchTab('maintenance')">Журнал ТО</button>
+
+        <!-- Вкладка Бухгалтера и Админа -->
+        <button class="nav-btn accountant-only hidden" onclick="switchTab('analytics')">Аналитика</button>
+
+        <!-- Вкладка Админа -->
+        <button class="nav-btn admin-only hidden" onclick="switchTab('users')">Пользователи</button>
     </nav>
 
     <div class="nav-user">
         <div id="user-pill" class="user-pill hidden">
-            <span id="user-display-name">Водитель</span>
-            <span id="user-role-badge" class="badge">CLIENT</span>
-            <button class="logout-btn" onclick="logout()">✕</button>
+            <div class="user-avatar" id="user-avatar">U</div>
+            <div class="user-meta">
+                <span id="user-display-name" class="user-name">Имя</span>
+                <span id="user-role-badge" class="badge">ROLE</span>
+            </div>
+            <button class="logout-btn" onclick="logout()" title="Выйти">✕</button>
         </div>
         <button id="login-open-btn" class="btn btn-primary" onclick="openAuthModal()">Войти</button>
     </div>
 </header>
 
-<!-- ГЛАВНЫЙ КОНТЕЙНЕР -->
 <main class="container">
 
     <!-- ПАНЕЛЬ АКТИВНОЙ ПОЕЗДКИ / БРОНИ (HUD) -->
     <section id="active-rental-hud" class="active-hud hidden">
-        <div class="hud-glow"></div>
         <div class="hud-content">
             <div class="hud-status">
                 <span class="pulse-indicator"></span>
@@ -50,12 +59,12 @@
             </div>
             <div class="hud-metrics">
                 <div class="metric-block">
-                    <span class="metric-label">Время</span>
+                    <span class="metric-label">Время сессии</span>
                     <span id="hud-timer" class="metric-value">00:00</span>
                 </div>
                 <div class="metric-block">
-                    <span class="metric-label">Текущий чек</span>
-                    <span id="hud-cost" class="metric-value text-accent">0.00 руб.</span>
+                    <span class="metric-label">Текущий счет</span>
+                    <span id="hud-cost" class="metric-value text-cyan">0.00 руб.</span>
                 </div>
             </div>
             <div class="hud-actions">
@@ -64,31 +73,68 @@
         </div>
     </section>
 
-    <!-- ВКЛАДКА 1: КАТАЛОГ МАШИН -->
+    <!-- ================= ВКЛАДКА 1: КАТАЛОГ (КЛИЕНТ) ================= -->
     <div id="tab-catalog" class="tab-content active">
         <div class="section-header">
             <div>
                 <h2>Доступный автопарк</h2>
-                <p class="subtitle">Выберите автомобиль для мгновенного бронирования или старта поездки</p>
+                <p class="subtitle">Автомобили, готовые к мгновенной аренде и бронированию в городе</p>
             </div>
             <div class="filter-group">
-                <button class="filter-btn active" onclick="filterCars('ALL')">Все</button>
-                <button class="filter-btn" onclick="filterCars('AVAILABLE')">Свободные</button>
-                <button class="filter-btn" onclick="filterCars('IN_USE')">В пути</button>
+                <button class="filter-btn active" onclick="setCarFilter('ALL', this)">Все авто</button>
+                <button class="filter-btn" onclick="setCarFilter('AVAILABLE', this)">Свободные</button>
+                <button class="filter-btn" onclick="setCarFilter('IN_USE', this)">В пути</button>
+            </div>
+        </div>
+        <div id="cars-grid" class="cars-grid"></div>
+    </div>
+
+    <!-- ================= ВКЛАДКА 2: ЛИЧНЫЙ КАБИНЕТ (КЛИЕНТ) ================= -->
+    <div id="tab-profile" class="tab-content">
+        <div class="section-header">
+            <h2>Личный кабинет водителя</h2>
+            <p class="subtitle">Ваш профиль, статистика поездок и история списаний</p>
+        </div>
+
+        <!-- Карточка профиля и статистика -->
+        <div class="profile-grid">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="prof-avatar">U</div>
+                    <div>
+                        <h3 id="prof-fullname">Иванов Иван</h3>
+                        <span id="prof-username" class="text-muted">@client1</span>
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <div class="detail-row"><span>Телефон:</span><strong id="prof-phone">+375 29 000-00-00</strong></div>
+                    <div class="detail-row"><span>Роль в системе:</span><span id="prof-role" class="badge">ROLE_CLIENT</span></div>
+                    <div class="detail-row"><span>Статус аккаунта:</span><span class="tag tag-success" id="prof-status">Активен</span></div>
+                    <div class="detail-row"><span>Дата регистрации:</span><span id="prof-created" class="text-muted">2026-10-20</span></div>
+                </div>
+            </div>
+
+            <div class="stats-cards-mini">
+                <div class="stat-mini">
+                    <span class="stat-label">Всего поездок</span>
+                    <span class="stat-num" id="prof-total-rides">0</span>
+                </div>
+                <div class="stat-mini">
+                    <span class="stat-label">Потрачено всего</span>
+                    <span class="stat-num text-cyan" id="prof-total-spent">0.00 руб.</span>
+                </div>
+                <div class="stat-mini">
+                    <span class="stat-label">Тарифный план</span>
+                    <span class="stat-num">Базовый (0.45/мин)</span>
+                </div>
+                <div class="stat-mini">
+                    <span class="stat-label">Персональная скидка</span>
+                    <span class="stat-num text-purple">0%</span>
+                </div>
             </div>
         </div>
 
-        <div id="cars-grid" class="cars-grid">
-            <!-- Карточки авто рендерятся из app.js -->
-        </div>
-    </div>
-
-    <!-- ВКЛАДКА 2: ИСТОРИЯ ПОЕЗДОК -->
-    <div id="tab-history" class="tab-content">
-        <div class="section-header">
-            <h2>История ваших поездок</h2>
-            <p class="subtitle">Детализированный архив завершенных сессий и финансовых списаний</p>
-        </div>
+        <h3 style="margin: 32px 0 16px 0;">История завершенных поездок</h3>
         <div class="table-card">
             <table class="custom-table">
                 <thead>
@@ -98,21 +144,22 @@
                     <th>Старт</th>
                     <th>Финиш</th>
                     <th>Статус</th>
-                    <th>Стоимость</th>
+                    <th>Чек</th>
                 </tr>
                 </thead>
-                <tbody id="history-tbody">
-                <!-- Строки истории рендерятся из app.js -->
-                </tbody>
+                <tbody id="history-tbody"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- ВКЛАДКА 3: ЖУРНАЛ ТО (МЕНЕДЖЕР) -->
-    <div id="tab-maintenance" class="tab-content">
+    <!-- ================= ВКЛАДКА 3: ДИСПЕТЧЕР ПАРКА (МЕНЕДЖЕР) ================= -->
+    <div id="tab-fleet" class="tab-content">
         <div class="section-header">
-            <h2>Журнал технического обслуживания</h2>
-            <button class="btn btn-primary" onclick="openMaintenanceModal()">+ Отправить авто на СТО</button>
+            <div>
+                <h2>Диспетчерская автопарка</h2>
+                <p class="subtitle">Управление статусами, актуализация пробега и вывод машин на линию</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAddCarModal()">+ Добавить автомобиль</button>
         </div>
         <div class="table-card">
             <table class="custom-table">
@@ -120,31 +167,62 @@
                 <tr>
                     <th>ID</th>
                     <th>Авто</th>
-                    <th>Работы</th>
-                    <th>Стоимость</th>
-                    <th>Дата начала</th>
+                    <th>Номер</th>
+                    <th>Пробег</th>
+                    <th>Топливо</th>
                     <th>Статус</th>
-                    <th>Действие</th>
+                    <th>Действия диспетчера</th>
                 </tr>
                 </thead>
-                <tbody id="maintenance-tbody">
-                <!-- Записи ТО рендерятся из app.js -->
-                </tbody>
+                <tbody id="fleet-tbody"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- ВКЛАДКА 4: АНАЛИТИКА -->
+    <!-- ================= ВКЛАДКА 4: ЖУРНАЛ ТО (МЕНЕДЖЕР) ================= -->
+    <div id="tab-maintenance" class="tab-content">
+        <div class="section-header">
+            <div>
+                <h2>Журнал сервисного обслуживания (СТО)</h2>
+                <p class="subtitle">Контроль ремонтов, замены расходных материалов и затрат компании</p>
+            </div>
+            <button class="btn btn-primary" onclick="openMaintenanceModal()">+ Отправить авто на ТО</button>
+        </div>
+        <div class="table-card">
+            <table class="custom-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Авто</th>
+                    <th>Описание работ</th>
+                    <th>Затраты</th>
+                    <th>Дата начала</th>
+                    <th>Дата закрытия</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                </tr>
+                </thead>
+                <tbody id="maintenance-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ================= ВКЛАДКА 5: АНАЛИТИКА (БУХГАЛТЕР) ================= -->
     <div id="tab-analytics" class="tab-content">
         <div class="section-header">
-            <h2>Экономический анализ автопарка</h2>
-            <p class="subtitle">Сводные показатели окупаемости, утилизации и финансового результата</p>
+            <h2>Финансовый и аналитический дашборд</h2>
+            <p class="subtitle">Сводный расчет ключевых показателей эффективности автопарка</p>
         </div>
         <div class="analytics-grid">
             <div class="stat-card">
                 <span class="stat-icon">💰</span>
-                <span class="stat-title">Общая выручка</span>
-                <span id="stat-revenue" class="stat-value text-accent">0.00 руб.</span>
+                <span class="stat-title">Совокупная выручка</span>
+                <span id="stat-revenue" class="stat-value text-cyan">0.00 руб.</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">🛠️</span>
+                <span class="stat-title">Затраты на ремонт и ТО</span>
+                <span id="stat-maint-cost" class="stat-value text-danger">0.00 руб.</span>
             </div>
             <div class="stat-card">
                 <span class="stat-icon">📈</span>
@@ -153,20 +231,39 @@
             </div>
             <div class="stat-card">
                 <span class="stat-icon">⚡</span>
-                <span class="stat-title">Утилизация парка</span>
-                <span id="stat-utilization" class="stat-value text-accent">0%</span>
+                <span class="stat-title">Утилизация автопарка</span>
+                <span id="stat-utilization" class="stat-value text-cyan">0%</span>
             </div>
-            <div class="stat-card">
-                <span class="stat-icon">🏆</span>
-                <span class="stat-title">Лидер по доходу</span>
-                <span id="stat-top-brand" class="stat-value">—</span>
-            </div>
+        </div>
+    </div>
+
+    <!-- ================= ВКЛАДКА 6: ПОЛЬЗОВАТЕЛИ (АДМИНИСТРАТОР) ================= -->
+    <div id="tab-users" class="tab-content">
+        <div class="section-header">
+            <h2>Управление учетными записями</h2>
+            <p class="subtitle">Аудит аккаунтов, контроль ролевого доступа и блокировка нарушителей</p>
+        </div>
+        <div class="table-card">
+            <table class="custom-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Логин</th>
+                    <th>ФИО</th>
+                    <th>Телефон</th>
+                    <th>Роль</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                </tr>
+                </thead>
+                <tbody id="users-tbody"></tbody>
+            </table>
         </div>
     </div>
 
 </main>
 
-<!-- МОДАЛЬНОЕ ОКНО: АВТОРИЗАЦИЯ / РЕГИСТРАЦИЯ -->
+<!-- МОДАЛКА: ВХОД / РЕГИСТРАЦИЯ -->
 <div id="auth-modal" class="modal-overlay hidden">
     <div class="modal-card">
         <div class="modal-tabs">
@@ -174,20 +271,18 @@
             <button id="auth-tab-register" class="modal-tab-btn" onclick="switchAuthTab('register')">Регистрация</button>
         </div>
 
-        <!-- ФОРМА ВХОДА -->
         <form id="form-login" onsubmit="handleLogin(event)">
             <div class="form-group">
-                <label>Имя пользователя</label>
+                <label>Логин</label>
                 <input type="text" id="login-username" required placeholder="Введите логин">
             </div>
             <div class="form-group">
                 <label>Пароль</label>
                 <input type="password" id="login-password" required placeholder="••••••••">
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Войти в систему</button>
+            <button type="submit" class="btn btn-primary btn-block">Войти в аккаунт</button>
         </form>
 
-        <!-- ФОРМА РЕГИСТРАЦИИ -->
         <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
             <div class="form-group">
                 <label>Логин</label>
@@ -200,27 +295,71 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Имя</label>
-                    <input type="text" id="reg-firstname" required placeholder="Иван">
+                    <input type="text" id="reg-firstname" required placeholder="Алексей">
                 </div>
                 <div class="form-group">
                     <label>Фамилия</label>
-                    <input type="text" id="reg-lastname" required placeholder="Иванов">
+                    <input type="text" id="reg-lastname" required placeholder="Петров">
                 </div>
             </div>
             <div class="form-group">
                 <label>Телефон</label>
-                <input type="text" id="reg-phone" required placeholder="+375 29 000-00-00">
+                <input type="text" id="reg-phone" required placeholder="+375 29 123-45-67">
             </div>
             <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
         </form>
-
         <button class="modal-close-btn" onclick="closeAuthModal()">✕</button>
     </div>
 </div>
 
-<!-- ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ -->
-<div id="toast-container" class="toast-container"></div>
+<!-- МОДАЛКА: ДОБАВИТЬ АВТО (МЕНЕДЖЕР) -->
+<div id="add-car-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3 style="margin-bottom: 20px;">Добавление автомобиля</h3>
+        <form onsubmit="handleAddCar(event)">
+            <div class="form-row">
+                <div class="form-group"><label>Марка</label><input type="text" id="car-add-brand" required placeholder="Geely"></div>
+                <div class="form-group"><label>Модель</label><input type="text" id="car-add-model" required placeholder="Emgrand"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Госномер</label><input type="text" id="car-add-plate" required placeholder="7777 XX-7"></div>
+                <div class="form-group"><label>Тариф (руб/мин)</label><input type="number" step="0.01" id="car-add-price" required value="0.42"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Топливо (%)</label><input type="number" id="car-add-fuel" required value="100"></div>
+                <div class="form-group"><label>Пробег (км)</label><input type="number" id="car-add-mileage" required value="5000"></div>
+            </div>
+            <div class="form-group"><label>Местоположение</label><input type="text" id="car-add-loc" required value="ул. Немига, 5"></div>
+            <button type="submit" class="btn btn-primary btn-block">Сохранить в автопарк</button>
+        </form>
+        <button class="modal-close-btn" onclick="closeAddCarModal()">✕</button>
+    </div>
+</div>
 
+<!-- МОДАЛКА: ОТПРАВИТЬ НА СТО (МЕНЕДЖЕР) -->
+<div id="maint-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3 style="margin-bottom: 20px;">Направление на техобслуживание</h3>
+        <form onsubmit="handleSendToMaint(event)">
+            <div class="form-group">
+                <label>ID автомобиля</label>
+                <input type="number" id="maint-car-id" required readonly>
+            </div>
+            <div class="form-group">
+                <label>Описание неисправности / работ</label>
+                <input type="text" id="maint-desc" required placeholder="Замена тормозных колодок">
+            </div>
+            <div class="form-group">
+                <label>Ориентировочная стоимость (руб.)</label>
+                <input type="number" step="0.01" id="maint-cost" required value="150.00">
+            </div>
+            <button type="submit" class="btn btn-danger btn-block">Подтвердить отправку</button>
+        </form>
+        <button class="modal-close-btn" onclick="closeMaintModal()">✕</button>
+    </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
 <script src="app.js"></script>
 </body>
 </html>

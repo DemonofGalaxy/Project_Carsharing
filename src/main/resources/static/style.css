@@ -1,21 +1,20 @@
 :root {
-    --bg-base: #08070e;
-    --bg-surface: rgba(22, 17, 43, 0.65);
-    --bg-surface-hover: rgba(35, 27, 68, 0.75);
-    --border-color: rgba(157, 78, 221, 0.25);
-    --border-glow: rgba(0, 242, 254, 0.4);
+    --bg-base: #07060c;
+    --bg-surface: rgba(18, 14, 33, 0.75);
+    --bg-surface-hover: rgba(28, 22, 53, 0.85);
+    --border-color: rgba(157, 78, 221, 0.22);
+    --border-glow: rgba(0, 242, 254, 0.45);
 
     --primary-cyan: #00f2fe;
     --primary-azure: #4facfe;
     --accent-purple: #9d4edd;
-    --accent-purple-glow: rgba(157, 78, 221, 0.5);
 
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
 
-    --danger: #ff4b72;
-    --success: #00e676;
-    --warning: #ffb300;
+    --danger: #ef4444;
+    --success: #10b981;
+    --warning: #f59e0b;
 }
 
 * {
@@ -27,10 +26,9 @@
 
 body {
     background-color: var(--bg-base);
-    background-image:
-            radial-gradient(at 0% 0%, rgba(121, 40, 202, 0.18) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.12) 0px, transparent 50%),
-            radial-gradient(at 50% 50%, rgba(18, 14, 36, 1) 0px, var(--bg-base) 100%);
+    background-image: radial-gradient(at 0% 0%, rgba(121, 40, 202, 0.2) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.15) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(16, 12, 32, 1) 0px, var(--bg-base) 100%);
     background-attachment: fixed;
     color: var(--text-main);
     min-height: 100vh;
@@ -41,9 +39,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 40px;
-    background: rgba(13, 10, 26, 0.85);
-    backdrop-filter: blur(16px);
+    padding: 16px 36px;
+    background: rgba(10, 8, 20, 0.88);
+    backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
@@ -53,11 +51,11 @@ body {
 .nav-brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .brand-icon {
-    font-size: 22px;
+    font-size: 24px;
     background: linear-gradient(135deg, var(--accent-purple), var(--primary-cyan));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -77,20 +75,20 @@ body {
 
 .nav-links {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     background: rgba(255, 255, 255, 0.03);
     padding: 4px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .nav-btn {
     background: transparent;
     border: none;
     color: var(--text-muted);
-    padding: 8px 18px;
-    border-radius: 8px;
-    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.25s ease;
@@ -101,7 +99,7 @@ body {
 }
 
 .nav-btn.active {
-    background: linear-gradient(135deg, rgba(157, 78, 221, 0.3), rgba(0, 242, 254, 0.2));
+    background: linear-gradient(135deg, rgba(157, 78, 221, 0.35), rgba(0, 242, 254, 0.25));
     color: var(--primary-cyan);
     border: 1px solid var(--border-glow);
     box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
@@ -110,19 +108,43 @@ body {
 .user-pill {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: var(--bg-surface);
-    padding: 6px 14px;
+    padding: 5px 12px;
     border-radius: 20px;
     border: 1px solid var(--border-color);
 }
 
-.badge {
-    background: linear-gradient(135deg, var(--accent-purple), #5b21b6);
-    font-size: 11px;
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--accent-purple), var(--primary-azure));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+.user-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 12px;
     font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 10px;
+}
+
+.badge {
+    background: rgba(157, 78, 221, 0.25);
+    color: var(--primary-cyan);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
 }
 
 .logout-btn {
@@ -130,8 +152,13 @@ body {
     border: none;
     color: var(--text-muted);
     cursor: pointer;
+    font-size: 14px;
+    margin-left: 4px;
 }
-.logout-btn:hover { color: var(--danger); }
+
+.logout-btn:hover {
+    color: var(--danger);
+}
 
 /* CONTAINER & TABS */
 .container {
@@ -140,12 +167,24 @@ body {
     padding: 0 24px;
 }
 
-.tab-content { display: none; }
-.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .section-header {
@@ -166,12 +205,46 @@ body {
     margin-top: 4px;
 }
 
-/* BUTTONS */
+/* ВОТ ОНИ! СТИЛИ ДЛЯ КНОПОК ФИЛЬТРОВ (НЕОНОВЫЕ ПИЛЮЛИ ВМЕСТО СЕРЫХ КВАДРАТОВ) */
+.filter-group {
+    display: flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.filter-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    padding: 8px 18px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.filter-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(157, 78, 221, 0.25));
+    color: var(--primary-cyan);
+    border: 1px solid var(--primary-cyan);
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+}
+
+/* КНОПКИ */
 .btn {
-    padding: 10px 22px;
+    padding: 10px 20px;
     border-radius: 10px;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
     border: none;
     transition: all 0.25s ease;
@@ -189,25 +262,33 @@ body {
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, #ef4444, var(--danger));
+    background: linear-gradient(135deg, #ef4444, #dc2626);
     color: #fff;
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
 }
 
 .btn-danger:hover {
-    box-shadow: 0 0 25px rgba(239, 68, 68, 0.7);
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.65);
 }
 
-.btn-block { width: 100%; margin-top: 12px; }
+.btn-block {
+    width: 100%;
+    margin-top: 14px;
+}
 
-/* HUD (ACTIVE RIDE) */
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+}
+
+/* HUD АКТИВНОЙ ПОЕЗДКИ */
 .active-hud {
-    position: relative;
-    background: linear-gradient(135deg, rgba(26, 17, 51, 0.8), rgba(11, 23, 44, 0.8));
+    background: linear-gradient(135deg, rgba(22, 14, 46, 0.85), rgba(8, 20, 38, 0.85));
     backdrop-filter: blur(16px);
     border: 1px solid var(--primary-cyan);
     border-radius: 18px;
-    padding: 24px 32px;
+    padding: 22px 30px;
     margin-bottom: 32px;
     box-shadow: 0 0 30px rgba(0, 242, 254, 0.25);
 }
@@ -237,14 +318,19 @@ body {
 }
 
 @keyframes pulse {
-    0% { transform: scale(0.9); opacity: 0.7; }
-    50% { transform: scale(1.3); opacity: 1; }
-    100% { transform: scale(0.9); opacity: 0.7; }
+    0%, 100% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
 }
 
 .hud-metrics {
     display: flex;
-    gap: 40px;
+    gap: 36px;
 }
 
 .metric-block {
@@ -253,16 +339,16 @@ body {
 }
 
 .metric-label {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-muted);
 }
 
 .metric-value {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
 }
 
-/* CARDS GRID */
+/* СЕТКА АВТО */
 .cars-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -271,10 +357,10 @@ body {
 
 .car-card {
     background: var(--bg-surface);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(14px);
     border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 24px;
+    border-radius: 18px;
+    padding: 22px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -284,14 +370,14 @@ body {
 .car-card:hover {
     border-color: var(--border-glow);
     transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(0, 242, 254, 0.15);
+    box-shadow: 0 12px 30px rgba(0, 242, 254, 0.15);
 }
 
 .car-card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
 .car-title {
@@ -302,51 +388,75 @@ body {
 .plate-badge {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 12px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--text-muted);
 }
 
 .car-status-tag {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 12px;
+    padding: 4px 8px;
+    border-radius: 10px;
     text-transform: uppercase;
 }
 
-.status-AVAILABLE { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid var(--success); }
-.status-IN_USE { background: rgba(0, 242, 254, 0.15); color: var(--primary-cyan); border: 1px solid var(--primary-cyan); }
-.status-RESERVED { background: rgba(255, 179, 0, 0.15); color: var(--warning); border: 1px solid var(--warning); }
-.status-MAINTENANCE { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
+.status-AVAILABLE {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.status-IN_USE {
+    background: rgba(0, 242, 254, 0.15);
+    color: var(--primary-cyan);
+    border: 1px solid var(--primary-cyan);
+}
+
+.status-RESERVED {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.status-MAINTENANCE {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+    border: 1px solid var(--danger);
+}
+
+.status-BLOCKED {
+    background: rgba(148, 163, 184, 0.15);
+    color: var(--text-muted);
+    border: 1px solid var(--text-muted);
+}
 
 .car-info-row {
     display: flex;
     justify-content: space-between;
-    margin: 8px 0;
-    font-size: 14px;
+    margin: 6px 0;
+    font-size: 13px;
     color: var(--text-muted);
 }
 
 .fuel-bar {
     width: 100%;
-    height: 6px;
+    height: 5px;
     background: rgba(255, 255, 255, 0.08);
     border-radius: 10px;
     overflow: hidden;
-    margin: 12px 0 16px 0;
+    margin: 10px 0 14px 0;
 }
 
 .fuel-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--accent-purple), var(--primary-cyan));
-    box-shadow: 0 0 10px var(--primary-cyan);
 }
 
 .car-price {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
     color: var(--primary-cyan);
 }
@@ -354,16 +464,90 @@ body {
 .car-card-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 18px;
+    gap: 10px;
+    margin-top: 16px;
 }
 
-/* TABLES */
-.table-card {
+/* ПРОФИЛЬ (ЛИЧНЫЙ КАБИНЕТ) */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.profile-card {
     background: var(--bg-surface);
-    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 26px;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.profile-avatar {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--accent-purple), var(--primary-cyan));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #07060c;
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.stats-cards-mini {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.stat-mini {
+    background: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.stat-num {
+    font-size: 24px;
+    font-weight: 800;
+    margin-top: 8px;
+}
+
+/* ТАБЛИЦЫ */
+.table-card {
+    background: var(--bg-surface);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
     overflow: hidden;
 }
 
@@ -373,10 +557,10 @@ body {
 }
 
 .custom-table th, .custom-table td {
-    padding: 16px 20px;
+    padding: 14px 18px;
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    font-size: 13px;
 }
 
 .custom-table th {
@@ -385,7 +569,7 @@ body {
     font-weight: 600;
 }
 
-/* ANALYTICS */
+/* АНАЛИТИКА */
 .analytics-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -395,20 +579,35 @@ body {
 .stat-card {
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: 16px;
+    border-radius: 18px;
     padding: 24px;
     display: flex;
     flex-direction: column;
 }
 
-.stat-icon { font-size: 28px; margin-bottom: 12px; }
-.stat-title { font-size: 13px; color: var(--text-muted); }
-.stat-value { font-size: 26px; font-weight: 800; margin-top: 6px; }
+.stat-icon {
+    font-size: 26px;
+    margin-bottom: 10px;
+}
 
-/* MODAL */
+.stat-title {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    margin-top: 6px;
+}
+
+/* МОДАЛКИ */
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(10px);
     display: flex;
@@ -418,18 +617,18 @@ body {
 }
 
 .modal-card {
-    background: #110d24;
+    background: #0f0b20;
     border: 1px solid var(--border-color);
     box-shadow: 0 0 50px rgba(157, 78, 221, 0.25);
     border-radius: 20px;
-    padding: 36px;
-    width: 420px;
+    padding: 32px;
+    width: 440px;
     position: relative;
 }
 
 .modal-tabs {
     display: flex;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -449,14 +648,14 @@ body {
 }
 
 .form-group {
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
 .form-group label {
     display: block;
     font-size: 12px;
     color: var(--text-muted);
-    margin-bottom: 6px;
+    margin-bottom: 5px;
 }
 
 .form-group input {
@@ -464,7 +663,7 @@ body {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-main);
-    padding: 12px;
+    padding: 10px 12px;
     border-radius: 8px;
     outline: none;
 }
@@ -474,16 +673,55 @@ body {
     box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
 }
 
-.form-row { display: flex; gap: 12px; }
+.form-row {
+    display: flex;
+    gap: 12px;
+}
 
 .modal-close-btn {
     position: absolute;
-    top: 16px; right: 16px;
-    background: none; border: none;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
     color: var(--text-muted);
     cursor: pointer;
     font-size: 16px;
 }
 
-.hidden { display: none !important; }
-.text-accent { color: var(--primary-cyan) !important; }
+.hidden {
+    display: none !important;
+}
+
+.text-cyan {
+    color: var(--primary-cyan) !important;
+}
+
+.text-purple {
+    color: var(--accent-purple) !important;
+}
+
+.text-danger {
+    color: var(--danger) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.tag {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.tag-success {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+}
+
+.tag-danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}

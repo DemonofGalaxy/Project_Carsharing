@@ -78,19 +78,49 @@ public void run(String... args) throws Exception{
         carRepository.saveAll(List.of(car1,car2,car3,car4));
         log.info("Демонстрационные автомобили успешно загружены в базу данных: {} шт.", carRepository.count());
     }
-    if(userRepository.count()==0) {
-        User user1 = User.builder()
-                .username("client1")
-                .password(passwordEncoder.encode("12345"))
-                .firstName("Ivan")
-                .lastName("Иванов")
-                .phone("375191234567")
-                .userStatus(UserStatus.ROLE_CLIENT)
-                .isActive(true)
-                .build();
+        if (userRepository.count() == 0) {
+            User admin = User.builder()
+                    .username("admin")
+                    .password(passwordEncoder.encode("admin"))
+                    .firstName("Главный")
+                    .lastName("Администратор")
+                    .phone("+375291111111")
+                    .userStatus(UserStatus.ROLE_ADMIN)
+                    .isActive(true)
+                    .build();
 
-        userRepository.save(user1);
-        log.info("Test user created ID: {}", user1.getId());
+            User manager = User.builder()
+                    .username("manager")
+                    .password(passwordEncoder.encode("manager"))
+                    .firstName("Диспетчер")
+                    .lastName("Сервиса")
+                    .phone("+375292222222")
+                    .userStatus(UserStatus.ROLE_MANAGER)
+                    .isActive(true)
+                    .build();
+
+            User accountant = User.builder()
+                    .username("accountant")
+                    .password(passwordEncoder.encode("accountant"))
+                    .firstName("Анна")
+                    .lastName("Бухгалтер")
+                    .phone("+375293333333")
+                    .userStatus(UserStatus.ROLE_ACCOUNTANT)
+                    .isActive(true)
+                    .build();
+
+            User client = User.builder()
+                    .username("client1")
+                    .password(passwordEncoder.encode("12345"))
+                    .firstName("Иван")
+                    .lastName("Иванов")
+                    .phone("+375294444444")
+                    .userStatus(UserStatus.ROLE_CLIENT)
+                    .isActive(true)
+                    .build();
+
+            userRepository.saveAll(List.of(admin, manager, accountant, client));
+            log.info("Пользователи всех ролей успешно созданы в БД: Admin, Manager, Accountant, Client");
     }
 }
 }
