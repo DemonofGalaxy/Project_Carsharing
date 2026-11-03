@@ -4,9 +4,15 @@ import demonofgalaxy.project_carsharing.config.PasswordConfig;
 import demonofgalaxy.project_carsharing.dto.user.UserLoginDto;
 import demonofgalaxy.project_carsharing.dto.user.UserRegisterDto;
 import demonofgalaxy.project_carsharing.dto.user.UserResponseDto;
+import demonofgalaxy.project_carsharing.entity.car.Car;
+import demonofgalaxy.project_carsharing.entity.car.CarStatus;
+import demonofgalaxy.project_carsharing.entity.rental.Rental;
+import demonofgalaxy.project_carsharing.entity.rental.RentalStatus;
 import demonofgalaxy.project_carsharing.entity.user.User;
 import demonofgalaxy.project_carsharing.entity.user.UserStatus;
 import demonofgalaxy.project_carsharing.mapper.UserMapper;
+import demonofgalaxy.project_carsharing.repository.CarRepository;
+import demonofgalaxy.project_carsharing.repository.RentalRepository;
 import demonofgalaxy.project_carsharing.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -24,6 +32,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RentalRepository rentalRepository;
+    private final CarRepository carRepository;
 
     @Transactional
     public UserResponseDto registerUser(UserRegisterDto dto) {
@@ -53,8 +63,34 @@ public class UserService {
         user.setIsActive(false);
         userRepository.save(user);
         log.info("User with id={} deactivated",userId);
-        return userMapper.toDto(user);
+
+            List<Rental> reservedRentals = rentalRepository.findByUserIdAndStatus(userId, RentalStatus.RESERVED);
+            for (Rental r : reservedRentals) {
+                r.setStatus(RentalStatus.CANCELLED);
+                r.setEndTime(LocalDateTime.now());
+                Car car = r.getCar();
+                car.setStatus(CarStatus.AVAILABLE);
+                carRepository.save(car);
+                rentalRepository.save(r);
+                log.info("Auto-cancelled reservation ID={} for banned user ID={}, car ID={} is AVAILABLE", r.getId(), userId, car.getId());
+            }
+
+            List<Rental> activeRentals = rentalRepository.findByUserIdAndStatus(userId, RentalStatus.ACTIVE);
+            for (Rental r : activeRentals) {
+                r.setStatus(RentalStatus.COMPLETED);
+                r.setEndTime(LocalDateTime.now());
+                r.setTotalPrice(BigDecimal.valueOf(1.00));
+                Car car = r.getCar();
+                car.setStatus(CarStatus.AVAILABLE);
+                carRepository.save(car);
+                rentalRepository.save(r);
+                log.info("Force-completed ride ID={} for banned user ID={}, car ID={} is AVAILABLE", r.getId(), userId, car.getId());
+            }
+
+            log.info("User ID={} deactivated and all held vehicles freed", userId);
+            return userMapper.toDto(user);
     }
+
 
     public UserResponseDto activateUser(Long userId){
         User user=userRepository.findById(userId).orElseThrow(()->new NoSuchElementException("User not found with id: "+userId));

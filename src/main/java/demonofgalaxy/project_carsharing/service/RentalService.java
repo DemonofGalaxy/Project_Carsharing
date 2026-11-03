@@ -69,7 +69,7 @@ public class RentalService {
             throw new IllegalStateException("The user has an active rental");
         }
 
-        Car car = carRepository.findById(carId)
+        Car car = carRepository.findByIdWithlock(carId)
                 .orElseThrow(() -> new NoSuchElementException("the car is not found"));
         if (!car.getIsActive()) throw new IllegalStateException("Car is blocked");
         if (car.getStatus() != CarStatus.AVAILABLE) throw new IllegalStateException("Car isn`t available");
@@ -147,8 +147,8 @@ public class RentalService {
             throw new IllegalStateException("The user already has an active rental or reservation");
         }
 
-        Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new NoSuchElementException("Car not found"));
+        Car car = carRepository.findByIdWithlock(carId)
+                .orElseThrow(() -> new NoSuchElementException("Car not found with id:"+carId));
         if (!car.getIsActive()) throw new IllegalStateException("Car is deactivated");
         if (car.getStatus() != CarStatus.AVAILABLE)
             throw new IllegalStateException("Car is not available for reservation");

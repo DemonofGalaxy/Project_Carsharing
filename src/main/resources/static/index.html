@@ -5,29 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXUS DRIVE — Enterprise Carsharing</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
 </head>
 <body>
 
 <!-- ВЕРХНЯЯ ШАПКА -->
 <header class="navbar">
     <div class="nav-brand">
-        <div class="brand-icon">⚡</div>
         <span class="brand-name">NEXUS<span class="brand-accent">DRIVE</span></span>
+        <span class="brand-badge">ENTERPRISE</span>
     </div>
 
     <nav class="nav-links">
         <button class="nav-btn active" onclick="switchTab('catalog')">Автопарк</button>
         <button class="nav-btn auth-only" onclick="switchTab('profile')">Личный кабинет</button>
-
-        <!-- Вкладки Менеджера и Админа -->
         <button class="nav-btn manager-only hidden" onclick="switchTab('fleet')">Диспетчер парка</button>
         <button class="nav-btn manager-only hidden" onclick="switchTab('maintenance')">Журнал ТО</button>
-
-        <!-- Вкладка Бухгалтера и Админа -->
         <button class="nav-btn accountant-only hidden" onclick="switchTab('analytics')">Аналитика</button>
-
-        <!-- Вкладка Админа -->
         <button class="nav-btn admin-only hidden" onclick="switchTab('users')">Пользователи</button>
     </nav>
 
@@ -63,40 +58,41 @@
                     <span id="hud-timer" class="metric-value">00:00</span>
                 </div>
                 <div class="metric-block">
-                    <span class="metric-label">Текущий счет</span>
+                    <span class="metric-label">Текущий счет (по ставке авто)</span>
                     <span id="hud-cost" class="metric-value text-cyan">0.00 руб.</span>
                 </div>
             </div>
             <div class="hud-actions">
-                <button id="hud-action-btn" class="btn btn-danger" onclick="handleActiveAction()">Завершить поездку</button>
+                <button id="hud-action-btn" class="btn btn-danger" onclick="handleActiveAction()">Завершить поездку
+                </button>
             </div>
         </div>
     </section>
 
-    <!-- ================= ВКЛАДКА 1: КАТАЛОГ (КЛИЕНТ) ================= -->
+    <!-- ВКЛАДКА 1: КАТАЛОГ -->
     <div id="tab-catalog" class="tab-content active">
         <div class="section-header">
             <div>
-                <h2>Доступный автопарк</h2>
-                <p class="subtitle">Автомобили, готовые к мгновенной аренде и бронированию в городе</p>
+                <h2>Городской автопарк</h2>
+                <p class="subtitle">Интерактивный мониторинг доступности и бронирования транспортных средств</p>
             </div>
             <div class="filter-group">
-                <button class="filter-btn active" onclick="setCarFilter('ALL', this)">Все авто</button>
+                <button class="filter-btn active" onclick="setCarFilter('ALL', this)">Все автомобили</button>
                 <button class="filter-btn" onclick="setCarFilter('AVAILABLE', this)">Свободные</button>
-                <button class="filter-btn" onclick="setCarFilter('IN_USE', this)">В пути</button>
+                <button class="filter-btn" onclick="setCarFilter('IN_USE', this)">В поездке</button>
+                <button class="filter-btn" onclick="setCarFilter('MAINTENANCE', this)">На обслуживании / Ремонт</button>
             </div>
         </div>
         <div id="cars-grid" class="cars-grid"></div>
     </div>
 
-    <!-- ================= ВКЛАДКА 2: ЛИЧНЫЙ КАБИНЕТ (КЛИЕНТ) ================= -->
+    <!-- ВКЛАДКА 2: ЛИЧНЫЙ КАБИНЕТ -->
     <div id="tab-profile" class="tab-content">
         <div class="section-header">
             <h2>Личный кабинет водителя</h2>
-            <p class="subtitle">Ваш профиль, статистика поездок и история списаний</p>
+            <p class="subtitle">Учет персональной активности, расчет программы лояльности и чеки</p>
         </div>
 
-        <!-- Карточка профиля и статистика -->
         <div class="profile-grid">
             <div class="profile-card">
                 <div class="profile-header">
@@ -107,44 +103,48 @@
                     </div>
                 </div>
                 <div class="profile-details">
-                    <div class="detail-row"><span>Телефон:</span><strong id="prof-phone">+375 29 000-00-00</strong></div>
-                    <div class="detail-row"><span>Роль в системе:</span><span id="prof-role" class="badge">ROLE_CLIENT</span></div>
-                    <div class="detail-row"><span>Статус аккаунта:</span><span class="tag tag-success" id="prof-status">Активен</span></div>
-                    <div class="detail-row"><span>Дата регистрации:</span><span id="prof-created" class="text-muted">2026-10-20</span></div>
+                    <div class="detail-row"><span>Телефон:</span><strong id="prof-phone">+375 29 000-00-00</strong>
+                    </div>
+                    <div class="detail-row"><span>Роль доступа:</span><span id="prof-role"
+                                                                            class="badge">ROLE_CLIENT</span></div>
+                    <div class="detail-row"><span>Состояние аккаунта:</span><span class="tag tag-success"
+                                                                                  id="prof-status">Активен</span></div>
+                    <div class="detail-row"><span>Дата регистрации:</span><span id="prof-created"
+                                                                                class="text-muted">—</span></div>
                 </div>
             </div>
 
             <div class="stats-cards-mini">
                 <div class="stat-mini">
-                    <span class="stat-label">Всего поездок</span>
+                    <span class="stat-label">Завершенных поездок</span>
                     <span class="stat-num" id="prof-total-rides">0</span>
                 </div>
                 <div class="stat-mini">
-                    <span class="stat-label">Потрачено всего</span>
+                    <span class="stat-label">Всего оплачено</span>
                     <span class="stat-num text-cyan" id="prof-total-spent">0.00 руб.</span>
                 </div>
                 <div class="stat-mini">
-                    <span class="stat-label">Тарифный план</span>
-                    <span class="stat-num">Базовый (0.45/мин)</span>
+                    <span class="stat-label">Уровень лояльности</span>
+                    <span class="stat-num text-purple" id="prof-loyalty-tier">Базовый</span>
                 </div>
                 <div class="stat-mini">
                     <span class="stat-label">Персональная скидка</span>
-                    <span class="stat-num text-purple">0%</span>
+                    <span class="stat-num text-cyan" id="prof-discount-val">0%</span>
                 </div>
             </div>
         </div>
 
-        <h3 style="margin: 32px 0 16px 0;">История завершенных поездок</h3>
+        <h3 style="margin: 32px 0 16px 0;">История расчетных операций</h3>
         <div class="table-card">
             <table class="custom-table">
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>№</th>
                     <th>Автомобиль</th>
-                    <th>Старт</th>
-                    <th>Финиш</th>
+                    <th>Начало аренды</th>
+                    <th>Завершение</th>
                     <th>Статус</th>
-                    <th>Чек</th>
+                    <th>Итоговый чек</th>
                 </tr>
                 </thead>
                 <tbody id="history-tbody"></tbody>
@@ -152,26 +152,27 @@
         </div>
     </div>
 
-    <!-- ================= ВКЛАДКА 3: ДИСПЕТЧЕР ПАРКА (МЕНЕДЖЕР) ================= -->
+    <!-- ВКЛАДКА 3: ДИСПЕТЧЕР ПАРКА -->
     <div id="tab-fleet" class="tab-content">
         <div class="section-header">
             <div>
-                <h2>Диспетчерская автопарка</h2>
-                <p class="subtitle">Управление статусами, актуализация пробега и вывод машин на линию</p>
+                <h2>Диспетчерская служба автопарка</h2>
+                <p class="subtitle">Управление техническим состоянием, блокировкой и регистрацией новых единиц</p>
             </div>
-            <button class="btn btn-primary" onclick="openAddCarModal()">+ Добавить автомобиль</button>
+            <button class="btn btn-primary" onclick="openAddCarModal()">+ Зарегистрировать автомобиль</button>
         </div>
         <div class="table-card">
             <table class="custom-table">
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Авто</th>
-                    <th>Номер</th>
+                    <th>Марка и модель</th>
+                    <th>Госномер</th>
                     <th>Пробег</th>
                     <th>Топливо</th>
+                    <th>Ставка</th>
                     <th>Статус</th>
-                    <th>Действия диспетчера</th>
+                    <th>Действия управления</th>
                 </tr>
                 </thead>
                 <tbody id="fleet-tbody"></tbody>
@@ -179,27 +180,26 @@
         </div>
     </div>
 
-    <!-- ================= ВКЛАДКА 4: ЖУРНАЛ ТО (МЕНЕДЖЕР) ================= -->
+    <!-- ВКЛАДКА 4: ЖУРНАЛ ТО -->
     <div id="tab-maintenance" class="tab-content">
         <div class="section-header">
             <div>
-                <h2>Журнал сервисного обслуживания (СТО)</h2>
-                <p class="subtitle">Контроль ремонтов, замены расходных материалов и затрат компании</p>
+                <h2>Журнал технического обслуживания (СТО)</h2>
+                <p class="subtitle">Учет регламентных работ, сервисных затрат и закрытия заказ-нарядов</p>
             </div>
-            <button class="btn btn-primary" onclick="openMaintenanceModal()">+ Отправить авто на ТО</button>
         </div>
         <div class="table-card">
             <table class="custom-table">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Авто</th>
-                    <th>Описание работ</th>
+                    <th>Заказ-наряд</th>
+                    <th>Транспортное средство</th>
+                    <th>Содержание сервисных работ</th>
                     <th>Затраты</th>
-                    <th>Дата начала</th>
+                    <th>Дата открытия</th>
                     <th>Дата закрытия</th>
                     <th>Статус</th>
-                    <th>Действие</th>
+                    <th>Операция</th>
                 </tr>
                 </thead>
                 <tbody id="maintenance-tbody"></tbody>
@@ -207,41 +207,45 @@
         </div>
     </div>
 
-    <!-- ================= ВКЛАДКА 5: АНАЛИТИКА (БУХГАЛТЕР) ================= -->
+    <!-- ВКЛАДКА 5: АНАЛИТИКА (БЕЗ ЭМОДЗИ) -->
     <div id="tab-analytics" class="tab-content">
         <div class="section-header">
-            <h2>Финансовый и аналитический дашборд</h2>
-            <p class="subtitle">Сводный расчет ключевых показателей эффективности автопарка</p>
+            <div>
+                <h2>Финансово-экономический анализ автопарка</h2>
+                <p class="subtitle">Агрегированные показатели доходности, издержек и эффективности утилизации</p>
+            </div>
         </div>
         <div class="analytics-grid">
             <div class="stat-card">
-                <span class="stat-icon">💰</span>
-                <span class="stat-title">Совокупная выручка</span>
+                <span class="stat-meta-tag">[REVENUE]</span>
+                <span class="stat-title">Совокупный валовый доход</span>
                 <span id="stat-revenue" class="stat-value text-cyan">0.00 руб.</span>
             </div>
             <div class="stat-card">
-                <span class="stat-icon">🛠️</span>
-                <span class="stat-title">Затраты на ремонт и ТО</span>
+                <span class="stat-meta-tag text-danger">[EXPENSES]</span>
+                <span class="stat-title">Затраты на сервисное обслуживание</span>
                 <span id="stat-maint-cost" class="stat-value text-danger">0.00 руб.</span>
             </div>
             <div class="stat-card">
-                <span class="stat-icon">📈</span>
-                <span class="stat-title">Чистая прибыль</span>
+                <span class="stat-meta-tag text-purple">[NET PROFIT]</span>
+                <span class="stat-title">Чистая операционная прибыль</span>
                 <span id="stat-profit" class="stat-value">0.00 руб.</span>
             </div>
             <div class="stat-card">
-                <span class="stat-icon">⚡</span>
-                <span class="stat-title">Утилизация автопарка</span>
+                <span class="stat-meta-tag text-cyan">[UTILIZATION]</span>
+                <span class="stat-title">Коэффициент утилизации автопарка</span>
                 <span id="stat-utilization" class="stat-value text-cyan">0%</span>
             </div>
         </div>
     </div>
 
-    <!-- ================= ВКЛАДКА 6: ПОЛЬЗОВАТЕЛИ (АДМИНИСТРАТОР) ================= -->
+    <!-- ВКЛАДКА 6: ПОЛЬЗОВАТЕЛИ (АДМИН) -->
     <div id="tab-users" class="tab-content">
         <div class="section-header">
-            <h2>Управление учетными записями</h2>
-            <p class="subtitle">Аудит аккаунтов, контроль ролевого доступа и блокировка нарушителей</p>
+            <div>
+                <h2>Реестр учетных записей пользователей</h2>
+                <p class="subtitle">Контроль ролевого доступа, аудит клиентов и оперативная блокировка</p>
+            </div>
         </div>
         <div class="table-card">
             <table class="custom-table">
@@ -252,7 +256,7 @@
                     <th>ФИО</th>
                     <th>Телефон</th>
                     <th>Роль</th>
-                    <th>Статус</th>
+                    <th>Статус доступа</th>
                     <th>Действие</th>
                 </tr>
                 </thead>
@@ -267,26 +271,28 @@
 <div id="auth-modal" class="modal-overlay hidden">
     <div class="modal-card">
         <div class="modal-tabs">
-            <button id="auth-tab-login" class="modal-tab-btn active" onclick="switchAuthTab('login')">Вход</button>
-            <button id="auth-tab-register" class="modal-tab-btn" onclick="switchAuthTab('register')">Регистрация</button>
+            <button id="auth-tab-login" class="modal-tab-btn active" onclick="switchAuthTab('login')">Авторизация
+            </button>
+            <button id="auth-tab-register" class="modal-tab-btn" onclick="switchAuthTab('register')">Регистрация
+            </button>
         </div>
 
         <form id="form-login" onsubmit="handleLogin(event)">
             <div class="form-group">
-                <label>Логин</label>
+                <label>Имя пользователя</label>
                 <input type="text" id="login-username" required placeholder="Введите логин">
             </div>
             <div class="form-group">
                 <label>Пароль</label>
                 <input type="password" id="login-password" required placeholder="••••••••">
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Войти в аккаунт</button>
+            <button type="submit" class="btn btn-primary btn-block">Войти в систему</button>
         </form>
 
         <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
             <div class="form-group">
                 <label>Логин</label>
-                <input type="text" id="reg-username" required placeholder="Придумайте логин">
+                <input type="text" id="reg-username" required placeholder="Логин">
             </div>
             <div class="form-group">
                 <label>Пароль</label>
@@ -295,67 +301,92 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Имя</label>
-                    <input type="text" id="reg-firstname" required placeholder="Алексей">
+                    <input type="text" id="reg-firstname" required placeholder="Имя">
                 </div>
                 <div class="form-group">
                     <label>Фамилия</label>
-                    <input type="text" id="reg-lastname" required placeholder="Петров">
+                    <input type="text" id="reg-lastname" required placeholder="Фамилия">
                 </div>
             </div>
             <div class="form-group">
                 <label>Телефон</label>
-                <input type="text" id="reg-phone" required placeholder="+375 29 123-45-67">
+                <input type="text" id="reg-phone" required placeholder="+375 29 000-00-00">
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
+            <button type="submit" class="btn btn-primary btn-block">Зарегистрировать аккаунт</button>
         </form>
         <button class="modal-close-btn" onclick="closeAuthModal()">✕</button>
     </div>
 </div>
 
-<!-- МОДАЛКА: ДОБАВИТЬ АВТО (МЕНЕДЖЕР) -->
+<!-- МОДАЛКА: ДОБАВИТЬ АВТО -->
 <div id="add-car-modal" class="modal-overlay hidden">
     <div class="modal-card">
-        <h3 style="margin-bottom: 20px;">Добавление автомобиля</h3>
+        <h3 style="margin-bottom: 18px;">Ввод автомобиля в эксплуатацию</h3>
         <form onsubmit="handleAddCar(event)">
             <div class="form-row">
-                <div class="form-group"><label>Марка</label><input type="text" id="car-add-brand" required placeholder="Geely"></div>
-                <div class="form-group"><label>Модель</label><input type="text" id="car-add-model" required placeholder="Emgrand"></div>
+                <div class="form-group"><label>Марка</label><input type="text" id="car-add-brand" required
+                                                                   placeholder="Geely"></div>
+                <div class="form-group"><label>Модель</label><input type="text" id="car-add-model" required
+                                                                    placeholder="Coolray"></div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Госномер</label><input type="text" id="car-add-plate" required placeholder="7777 XX-7"></div>
-                <div class="form-group"><label>Тариф (руб/мин)</label><input type="number" step="0.01" id="car-add-price" required value="0.42"></div>
+                <div class="form-group"><label>Регистрационный знак</label><input type="text" id="car-add-plate"
+                                                                                  required placeholder="1234 АВ-7">
+                </div>
+                <div class="form-group"><label>Тариф (руб/мин)</label><input type="number" step="0.01"
+                                                                             id="car-add-price" required value="0.45">
+                </div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>Топливо (%)</label><input type="number" id="car-add-fuel" required value="100"></div>
-                <div class="form-group"><label>Пробег (км)</label><input type="number" id="car-add-mileage" required value="5000"></div>
+                <div class="form-group"><label>Уровень топлива (%)</label><input type="number" id="car-add-fuel"
+                                                                                 required value="100"></div>
+                <div class="form-group"><label>Текущий пробег (км)</label><input type="number" id="car-add-mileage"
+                                                                                 required value="1000"></div>
             </div>
-            <div class="form-group"><label>Местоположение</label><input type="text" id="car-add-loc" required value="ул. Немига, 5"></div>
-            <button type="submit" class="btn btn-primary btn-block">Сохранить в автопарк</button>
+            <div class="form-group"><label>Начальная локация</label><input type="text" id="car-add-loc" required
+                                                                           value="ул. Немига, 5"></div>
+            <button type="submit" class="btn btn-primary btn-block">Зарегистрировать в автопарке</button>
         </form>
         <button class="modal-close-btn" onclick="closeAddCarModal()">✕</button>
     </div>
 </div>
 
-<!-- МОДАЛКА: ОТПРАВИТЬ НА СТО (МЕНЕДЖЕР) -->
+<!-- МОДАЛКА: ОТПРАВИТЬ НА СТО С ВАЛИДАЦИЕЙ -->
 <div id="maint-modal" class="modal-overlay hidden">
     <div class="modal-card">
-        <h3 style="margin-bottom: 20px;">Направление на техобслуживание</h3>
+        <h3 style="margin-bottom: 18px;">Оформление заказ-наряда СТО</h3>
         <form onsubmit="handleSendToMaint(event)">
             <div class="form-group">
-                <label>ID автомобиля</label>
+                <label>ID транспортного средства</label>
                 <input type="number" id="maint-car-id" required readonly>
             </div>
             <div class="form-group">
-                <label>Описание неисправности / работ</label>
-                <input type="text" id="maint-desc" required placeholder="Замена тормозных колодок">
+                <label>Характер неисправности / регламентные работы</label>
+                <input type="text" id="maint-desc" required placeholder="Замена масла и фильтров">
             </div>
             <div class="form-group">
-                <label>Ориентировочная стоимость (руб.)</label>
+                <label>Предварительная смета затрат (руб.)</label>
                 <input type="number" step="0.01" id="maint-cost" required value="150.00">
             </div>
-            <button type="submit" class="btn btn-danger btn-block">Подтвердить отправку</button>
+            <button type="submit" class="btn btn-danger btn-block">Передать в ремонтную зону</button>
         </form>
         <button class="modal-close-btn" onclick="closeMaintModal()">✕</button>
+    </div>
+</div>
+
+<!-- МОДАЛКА: ЗАБРАТЬ С СТО (ВМЕСТО JS PROMPT) -->
+<div id="close-maint-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3 style="margin-bottom: 18px;">Закрытие заказ-наряда СТО</h3>
+        <form onsubmit="submitCompleteMaintenance(event)">
+            <input type="hidden" id="close-maint-id">
+            <div class="form-group">
+                <label>Фактическая стоимость выполненных работ (руб.)</label>
+                <input type="number" step="0.01" id="close-maint-cost" required value="150.00">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Принять автомобиль на линию</button>
+        </form>
+        <button class="modal-close-btn" onclick="closeCompleteMaintModal()">✕</button>
     </div>
 </div>
 

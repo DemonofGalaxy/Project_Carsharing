@@ -77,6 +77,17 @@ public class CarService {
         return carMapper.toDto(car);
     }
 
+    @Transactional
+    public CarResponseDto activateCar(Long carId) {
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new NoSuchElementException("Автомобиль с ID " + carId + " не найден"));
+        car.setIsActive(true);
+        car.setStatus(CarStatus.AVAILABLE);
+        carRepository.save(car);
+        log.info("Car ID={} unblocked and set to AVAILABLE", carId);
+        return carMapper.toDto(car);
+    }
+
 
 
 }

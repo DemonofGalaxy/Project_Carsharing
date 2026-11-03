@@ -3,15 +3,47 @@ const API_URL = 'http://localhost:8080/api';
 let currentUser = JSON.parse(sessionStorage.getItem('currentUser')) || null;
 let activeRental = null;
 let timerInterval = null;
+let pollingInterval = null;
 let currentCarFilter = 'ALL';
+let currentTab = 'catalog';
 
 document.addEventListener('DOMContentLoaded', () => {
     updateUserInterface();
     loadCars();
+    startPolling(); // Запуск автоматического обновления данных
 });
+
+// АВТОМАТИЧЕСКОЕ ОБНОВЛЕНИЕ БЕЗ ПЕРЕЗАГРУЗКИ СТРАНИЦЫ (КАЖДЫЕ 4 СЕКУНДЫ)
+function startPolling() {
+    clearInterval(pollingInterval);
+    pollingInterval = setInterval(async () => {
+        // Проверяем статус текущего пользователя (мгновенный бан при блокировке админом)
+        if (currentUser) {
+            try {
+                const res = await fetch(`${API_URL}/users/${currentUser.id}`);
+                if (res.ok) {
+                    const freshUser = await res.json();
+                    if (!freshUser.isActive) {
+                        logout();
+                        showToast('Ваш аккаунт был заблокирован администратором!', 'danger');
+                        return;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        // Автообновление активной вкладки
+        if (currentTab === 'catalog') loadCars(true);
+        if (currentTab === 'fleet') loadFleetTable(true);
+        if (currentTab === 'maintenance') loadMaintenanceRecords(true);
+        if (currentTab === 'analytics') loadAnalytics(true);
+        if (currentTab === 'users') loadUsersTable(true);
+    }, 4000);
+}
 
 // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
 function switchTab(tabId) {
+    currentTab = tabId;
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
 
@@ -22,6 +54,7 @@ function switchTab(tabId) {
         .find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(tabId));
     if (clickedBtn) clickedBtn.classList.add('active');
 
+    if (tabId === 'catalog') loadCars();
     if (tabId === 'profile') loadUserProfile();
     if (tabId === 'fleet') loadFleetTable();
     if (tabId === 'maintenance') loadMaintenanceRecords();
@@ -29,7 +62,7 @@ function switchTab(tabId) {
     if (tabId === 'users') loadUsersTable();
 }
 
-// ФИЛЬТРАЦИЯ КАТАЛОГА (НЕОНОВЫЕ КНОПКИ)
+// ФИЛЬТРАЦИЯ КАТАЛОГА (НЕОНОВЫЕ ПИЛЮЛИ)
 function setCarFilter(filter, btn) {
     currentCarFilter = filter;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -37,16 +70,15 @@ function setCarFilter(filter, btn) {
     loadCars();
 }
 
-// ЗАГРУЗКА КАТАЛОГА
-async function loadCars() {
+// ЗАГРУЗКА АВТОМОБИЛЕЙ
+async function loadCars(silent = false) {
     try {
-        const url = (currentCarFilter === 'AVAILABLE') ? `${API_URL}/cars/available` : `${API_URL}/cars`;
-        const res = await fetch(url);
+        const res = await fetch(`${API_URL}/cars`);
         let cars = await res.json();
 
-        if (currentCarFilter === 'IN_USE') {
-            cars = cars.filter(c => c.status === 'IN_USE');
-        }
+        if (currentCarFilter === 'AVAILABLE') cars = cars.filter(c => c.status === 'AVAILABLE');
+        if (currentCarFilter === 'IN_USE') cars = cars.filter(c => c.status === 'IN_USE');
+        if (currentCarFilter === 'MAINTENANCE') cars = cars.filter(c => c.status === 'MAINTENANCE' || c.status === 'BLOCKED');
 
         const grid = document.getElementById('cars-grid');
         grid.innerHTML = '';
@@ -85,58 +117,60 @@ async function loadCars() {
                         <div class="fuel-fill" style="width: ${car.fuelLevel}%"></div>
                     </div>
                     <div class="car-info-row">
-                        <span>Тариф:</span>
+                        <span>Тарифная ставка:</span>
                         <span class="car-price">${car.pricePerMinute} <small style="font-size:12px">руб/мин</small></span>
                     </div>
                 </div>
 
                 <div class="car-card-actions">
                     <button class="btn btn-primary" ${!isAvailable ? 'disabled style="opacity:0.35;cursor:not-allowed"' : ''} 
-                        onclick="handleStartRent(${car.id})">Поехать</button>
+                        onclick="handleStartRent(${car.id}, ${car.pricePerMinute})">Поехать</button>
                     <button class="btn btn-primary" style="background: rgba(255,255,255,0.06); color: var(--primary-cyan); border: 1px solid var(--primary-cyan)" 
                         ${!isAvailable ? 'disabled style="opacity:0.35;cursor:not-allowed"' : ''} 
-                        onclick="handleReserve(${car.id})">Бронь</button>
+                        onclick="handleReserve(${car.id}, ${car.pricePerMinute})">Бронь</button>
                 </div>
             `;
             grid.appendChild(card);
         });
     } catch (err) {
-        showToast('Ошибка загрузки авто: ' + err.message, 'danger');
+        if (!silent) showToast('Ошибка загрузки авто: ' + err.message, 'danger');
     }
 }
 
-// СТАРТ И БРОНЬ
-async function handleStartRent(carId) {
+// СТАРТ И БРОНЬ С УЧЕТОМ СТАВКИ КОНКРЕТНОЙ МАШИНЫ
+async function handleStartRent(carId, carRate) {
     if (!currentUser) { openAuthModal(); return; }
     try {
         const res = await fetch(`${API_URL}/rentals/start?userId=${currentUser.id}&carId=${carId}`, { method: 'POST' });
         if (!res.ok) {
-            const err = await res.json();
-            throw new Error(err.message || 'Ошибка старта');
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || 'Ошибка старта аренды');
         }
         activeRental = await res.json();
+        activeRental.pricePerMinute = activeRental.pricePerMinute || carRate;
         showToast('Поездка началась! Приятной дороги!', 'success');
         startActiveHud('ACTIVE');
         loadCars();
     } catch (e) { showToast(e.message, 'danger'); }
 }
 
-async function handleReserve(carId) {
+async function handleReserve(carId, carRate) {
     if (!currentUser) { openAuthModal(); return; }
     try {
         const res = await fetch(`${API_URL}/rentals/reserve?userId=${currentUser.id}&carId=${carId}`, { method: 'POST' });
         if (!res.ok) {
-            const err = await res.json();
+            const err = await res.json().catch(() => ({}));
             throw new Error(err.message || 'Ошибка бронирования');
         }
         activeRental = await res.json();
+        activeRental.pricePerMinute = activeRental.pricePerMinute || carRate;
         showToast('Машина забронирована на 20 минут', 'success');
         startActiveHud('RESERVED');
         loadCars();
     } catch (e) { showToast(e.message, 'danger'); }
 }
 
-// HUD ПОЕЗДКИ
+// ЖИВОЙ HUD С РАСЧЕТОМ ПО СТАВКЕ МАШИНЫ
 function startActiveHud(status) {
     const hud = document.getElementById('active-rental-hud');
     hud.classList.remove('hidden');
@@ -156,8 +190,9 @@ function startActiveHud(status) {
     }
 
     const startTime = new Date(activeRental.startTime).getTime();
-    clearInterval(timerInterval);
+    const rate = activeRental.pricePerMinute ? parseFloat(activeRental.pricePerMinute) : 0.45;
 
+    clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         const now = new Date().getTime();
         const diff = Math.max(0, Math.floor((now - startTime) / 1000));
@@ -166,8 +201,9 @@ function startActiveHud(status) {
         document.getElementById('hud-timer').innerText =
             `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
+        // Расчет строго по ставке конкретного авто!
         const estimatedMinutes = Math.max(1, mins);
-        const liveCost = (estimatedMinutes * 0.45).toFixed(2);
+        const liveCost = (estimatedMinutes * rate).toFixed(2);
         document.getElementById('hud-cost').innerText = `${liveCost} руб.`;
     }, 1000);
 }
@@ -183,7 +219,9 @@ async function handleActiveAction() {
         } catch (e) { showToast(e.message, 'danger'); }
     } else {
         try {
-            const res = await fetch(`${API_URL}/rentals/${activeRental.id}/end?tariffName=minuteTariffStrategy`, { method: 'POST' });
+            // Если у пользователя скидочный статус — отправляем discountTariffStrategy
+            const tariff = (currentUser && currentUser.loyaltyDiscount > 0) ? 'discountTariffStrategy' : 'minuteTariffStrategy';
+            const res = await fetch(`${API_URL}/rentals/${activeRental.id}/end?tariffName=${tariff}`, { method: 'POST' });
             const completed = await res.json();
             showToast(`Поездка завершена! Итоговый чек: ${completed.totalPrice} руб.`, 'success');
             stopHud();
@@ -198,7 +236,7 @@ function stopHud() {
     document.getElementById('active-rental-hud').classList.add('hidden');
 }
 
-// ================= ЛИЧНЫЙ КАБИНЕТ =================
+// ЛИЧНЫЙ КАБИНЕТ И РАСЧЕТ ПЕРСОНАЛЬНОЙ СКИДКИ
 async function loadUserProfile() {
     if (!currentUser) return;
     document.getElementById('prof-fullname').innerText = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`;
@@ -207,16 +245,31 @@ async function loadUserProfile() {
     document.getElementById('prof-role').innerText = currentUser.userStatus;
     document.getElementById('prof-avatar').innerText = currentUser.username.charAt(0).toUpperCase();
 
-    // Загрузка персональной истории
     try {
         const res = await fetch(`${API_URL}/rentals/user/${currentUser.id}`);
         const history = await res.json();
 
-        document.getElementById('prof-total-rides').innerText = history.length;
+        const ridesCount = history.length;
+        document.getElementById('prof-total-rides').innerText = ridesCount;
+
         const totalSpent = history
             .filter(r => r.totalPrice)
             .reduce((sum, r) => sum + parseFloat(r.totalPrice), 0);
         document.getElementById('prof-total-spent').innerText = `${totalSpent.toFixed(2)} руб.`;
+
+        // РАСЧЕТ ПЕРСОНАЛЬНОЙ СКИДКИ ПО ЛОЯЛЬНОСТИ
+        let discount = 0;
+        let tier = 'Базовый';
+        if (ridesCount >= 5) {
+            discount = 10;
+            tier = 'Золотой (Gold VIP)';
+        } else if (ridesCount >= 3) {
+            discount = 5;
+            tier = 'Серебряный (Silver)';
+        }
+        currentUser.loyaltyDiscount = discount;
+        document.getElementById('prof-loyalty-tier').innerText = tier;
+        document.getElementById('prof-discount-val').innerText = `${discount}%`;
 
         const tbody = document.getElementById('history-tbody');
         tbody.innerHTML = '';
@@ -235,8 +288,8 @@ async function loadUserProfile() {
     } catch (e) { showToast('Ошибка истории: ' + e.message, 'danger'); }
 }
 
-// ================= ДИСПЕТЧЕР ПАРКА (МЕНЕДЖЕР) =================
-async function loadFleetTable() {
+// ДИСПЕТЧЕР ПАРКА: БЛОКИРОВКА / РАЗБЛОКИРОВКА
+async function loadFleetTable(silent = false) {
     try {
         const res = await fetch(`${API_URL}/cars`);
         const cars = await res.json();
@@ -244,6 +297,7 @@ async function loadFleetTable() {
         tbody.innerHTML = '';
 
         cars.forEach(c => {
+            const isBlocked = !c.isActive || c.status === 'BLOCKED';
             tbody.innerHTML += `
                 <tr>
                     <td>#${c.id}</td>
@@ -251,55 +305,37 @@ async function loadFleetTable() {
                     <td><span class="plate-badge">${c.plateNumber}</span></td>
                     <td>${c.mileAge || 0} км</td>
                     <td>${c.fuelLevel}%</td>
+                    <td>${c.pricePerMinute} руб.</td>
                     <td><span class="car-status-tag status-${c.status}">${c.status}</span></td>
                     <td>
                         <button class="btn btn-sm btn-primary" onclick="openSendToMaintModal(${c.id})">На СТО</button>
-                        <button class="btn btn-sm btn-danger" onclick="handleDeactivateCar(${c.id})">Блок</button>
+                        <button class="btn btn-sm ${isBlocked ? 'btn-primary' : 'btn-danger'}" 
+                            onclick="handleToggleCarBlock(${c.id}, ${isBlocked})">
+                            ${isBlocked ? 'Разблок' : 'Блок'}
+                        </button>
                     </td>
                 </tr>
             `;
         });
-    } catch (e) { showToast(e.message, 'danger'); }
+    } catch (e) { if (!silent) showToast(e.message, 'danger'); }
 }
 
-async function handleAddCar(e) {
-    e.preventDefault();
-    const payload = {
-        brand: document.getElementById('car-add-brand').value,
-        model: document.getElementById('car-add-model').value,
-        plateNumber: document.getElementById('car-add-plate').value,
-        pricePerMinute: parseFloat(document.getElementById('car-add-price').value),
-        fuelLevel: parseInt(document.getElementById('car-add-fuel').value),
-        mileAge: parseInt(document.getElementById('car-add-mileage').value),
-        location: document.getElementById('car-add-loc').value
-    };
-
+async function handleToggleCarBlock(carId, isBlocked) {
+    const action = isBlocked ? 'activate' : 'deactivate';
     try {
-        const res = await fetch(`${API_URL}/cars`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error('Ошибка добавления авто');
-        closeAddCarModal();
-        showToast('Автомобиль успешно добавлен в автопарк!', 'success');
-        loadFleetTable();
-        loadCars();
-    } catch (err) { showToast(err.message, 'danger'); }
-}
-
-async function handleDeactivateCar(carId) {
-    if (!confirm('Вы уверены, что хотите заблокировать автомобиль?')) return;
-    try {
-        await fetch(`${API_URL}/cars/${carId}/deactivate`, { method: 'PATCH' });
-        showToast('Автомобиль заблокирован', 'success');
+        const res = await fetch(`${API_URL}/cars/${carId}/${action}`, { method: 'PATCH' });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || 'Ошибка изменения статуса авто');
+        }
+        showToast(`Автомобиль ${isBlocked ? 'разблокирован' : 'заблокирован'}`, 'success');
         loadFleetTable();
         loadCars();
     } catch (e) { showToast(e.message, 'danger'); }
 }
 
-// ================= ЖУРНАЛ СТО (МЕНЕДЖЕР) =================
-async function loadMaintenanceRecords() {
+// ЖУРНАЛ СТО: ЗАКРЫТИЕ ЗАКАЗ-НАРЯДА (ЧЕРЕЗ МОДАЛКУ ВМЕСТО PROMPT)
+async function loadMaintenanceRecords(silent = false) {
     try {
         const res = await fetch(`${API_URL}/maintenance`);
         const records = await res.json();
@@ -314,15 +350,15 @@ async function loadMaintenanceRecords() {
                     <td>${r.description}</td>
                     <td><strong>${r.cost ? r.cost + ' руб.' : '—'}</strong></td>
                     <td>${r.startDate ? r.startDate.replace('T', ' ').substring(0, 16) : '—'}</td>
-                    <td>${r.endDate ? r.endDate.replace('T', ' ').substring(0, 16) : '—'}</td>
-                    <td><span class="tag ${r.isCompleted ? 'tag-success' : 'tag-danger'}">${r.isCompleted ? 'Завершено' : 'В ремонте'}</span></td>
+                    <td>${r.endDate ? r.endDate.replace('T', ' ').substring(0, 16) : '<span class="text-muted">В ремонте</span>'}</td>
+                    <td><span class="tag ${r.isCompleted ? 'tag-success' : 'tag-danger'}">${r.isCompleted ? 'Завершено' : 'На СТО'}</span></td>
                     <td>
-                        ${!r.isCompleted ? `<button class="btn btn-sm btn-primary" onclick="handleCompleteMaint(${r.id})">Забрать с СТО</button>` : '—'}
+                        ${!r.isCompleted ? `<button class="btn btn-sm btn-primary" onclick="openCompleteMaintModal(${r.id}, ${r.cost || 150})">Забрать с СТО</button>` : '—'}
                     </td>
                 </tr>
             `;
         });
-    } catch (e) { showToast(e.message, 'danger'); }
+    } catch (e) { if (!silent) showToast(e.message, 'danger'); }
 }
 
 async function handleSendToMaint(e) {
@@ -338,27 +374,47 @@ async function handleSendToMaint(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        if (!res.ok) throw new Error('Ошибка отправки на СТО');
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            // ВЫВОДИМ ТОЧНУЮ ПРИЧИНУ С БЭКЕНДА
+            throw new Error(err.message || 'Ошибка отправки на СТО');
+        }
         closeMaintModal();
-        showToast('Машина отправлена на СТО', 'success');
+        showToast('Автомобиль успешно направлен в ремонтную зону', 'success');
         loadMaintenanceRecords();
         loadFleetTable();
     } catch (err) { showToast(err.message, 'danger'); }
 }
 
-async function handleCompleteMaint(recordId) {
-    const cost = prompt('Введите финальную стоимость ремонта (руб.):', '150.00');
-    if (!cost) return;
-    try {
-        await fetch(`${API_URL}/maintenance/${recordId}/complete?actualCost=${cost}`, { method: 'PATCH' });
-        showToast('Ремонт завершен, машина вернулась на линию!', 'success');
-        loadMaintenanceRecords();
-        loadFleetTable();
-    } catch (e) { showToast(e.message, 'danger'); }
+function openCompleteMaintModal(id, currentCost) {
+    document.getElementById('close-maint-id').value = id;
+    document.getElementById('close-maint-cost').value = currentCost || 150;
+    document.getElementById('close-maint-modal').classList.remove('hidden');
+}
+function closeCompleteMaintModal() {
+    document.getElementById('close-maint-modal').classList.add('hidden');
 }
 
-// ================= АНАЛИТИКА (БУХГАЛТЕР) =================
-async function loadAnalytics() {
+async function submitCompleteMaintenance(e) {
+    e.preventDefault();
+    const id = document.getElementById('close-maint-id').value;
+    const cost = document.getElementById('close-maint-cost').value;
+    try {
+        const res = await fetch(`${API_URL}/maintenance/${id}/complete?actualCost=${cost}`, { method: 'PATCH' });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || 'Ошибка завершения ТО');
+        }
+        closeCompleteMaintModal();
+        showToast('Ремонт успешно завершен! Автомобиль возвращен на линию.', 'success');
+        loadMaintenanceRecords();
+        loadFleetTable();
+        loadCars();
+    } catch (err) { showToast(err.message, 'danger'); }
+}
+
+// АНАЛИТИКА (БЕЗ ЭМОДЗИ)
+async function loadAnalytics(silent = false) {
     try {
         const res = await fetch(`${API_URL}/analytics/summary`);
         const d = await res.json();
@@ -366,11 +422,11 @@ async function loadAnalytics() {
         document.getElementById('stat-maint-cost').innerText = `${d.totalMaintenanceCost || 0} руб.`;
         document.getElementById('stat-profit').innerText = `${d.netProfit || 0} руб.`;
         document.getElementById('stat-utilization').innerText = `${d.fleetUtilizationRate || 0}%`;
-    } catch (e) { showToast(e.message, 'danger'); }
+    } catch (e) { if (!silent) showToast(e.message, 'danger'); }
 }
 
-// ================= ПОЛЬЗОВАТЕЛИ (АДМИНИСТРАТОР) =================
-async function loadUsersTable() {
+// ПОЛЬЗОВАТЕЛИ
+async function loadUsersTable(silent = false) {
     try {
         const res = await fetch(`${API_URL}/users`);
         const users = await res.json();
@@ -395,19 +451,23 @@ async function loadUsersTable() {
                 </tr>
             `;
         });
-    } catch (e) { showToast(e.message, 'danger'); }
+    } catch (e) { if (!silent) showToast(e.message, 'danger'); }
 }
 
 async function handleToggleUser(userId, currentStatus) {
     const action = currentStatus ? 'deactivate' : 'activate';
     try {
-        await fetch(`${API_URL}/users/${userId}/${action}`, { method: 'PATCH' });
+        const res = await fetch(`${API_URL}/users/${userId}/${action}`, { method: 'PATCH' });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || 'Ошибка изменения статуса');
+        }
         showToast(`Пользователь ${currentStatus ? 'заблокирован' : 'разблокирован'}`, 'success');
         loadUsersTable();
     } catch (e) { showToast(e.message, 'danger'); }
 }
 
-// ================= АВТОРИЗАЦИЯ =================
+// АВТОРИЗАЦИЯ С ТОЧНЫМИ ОШИБКАМИ
 async function handleLogin(e) {
     e.preventDefault();
     const username = document.getElementById('login-username').value;
@@ -419,14 +479,20 @@ async function handleLogin(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
-        if (!res.ok) throw new Error('Неверный логин или пароль');
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            // ПОКАЗЫВАЕМ ТОЧНУЮ ОШИБКУ: БЛОКИРОВКУ ИЛИ НЕВЕРНЫЙ ПАРОЛЬ
+            throw new Error(err.message || 'Неверный логин или пароль');
+        }
 
         currentUser = await res.json();
         sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
         closeAuthModal();
         updateUserInterface();
         showToast(`Добро пожаловать, ${currentUser.username}!`, 'success');
-    } catch (err) { showToast(err.message, 'danger'); }
+    } catch (err) {
+        showToast(err.message, 'danger');
+    }
 }
 
 async function handleRegister(e) {
@@ -445,7 +511,10 @@ async function handleRegister(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        if (!res.ok) throw new Error('Ошибка регистрации');
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || 'Ошибка регистрации');
+        }
 
         currentUser = await res.json();
         sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -461,10 +530,8 @@ function logout() {
     stopHud();
     updateUserInterface();
     switchTab('catalog');
-    showToast('Сессия завершена', 'success');
 }
 
-// ДИНАМИЧЕСКИЙ ИНТЕРФЕЙС РОЛЕЙ
 function updateUserInterface() {
     const pill = document.getElementById('user-pill');
     const loginBtn = document.getElementById('login-open-btn');
@@ -485,7 +552,6 @@ function updateUserInterface() {
     const isAccountant = role === 'ROLE_ACCOUNTANT' || role === 'ROLE_ADMIN';
     const isAdmin = role === 'ROLE_ADMIN';
 
-    // Включаем вкладки по правам доступа
     document.querySelectorAll('.auth-only').forEach(el => el.style.display = currentUser ? 'block' : 'none');
     document.querySelectorAll('.manager-only').forEach(el => el.classList.toggle('hidden', !isManager));
     document.querySelectorAll('.accountant-only').forEach(el => el.classList.toggle('hidden', !isAccountant));

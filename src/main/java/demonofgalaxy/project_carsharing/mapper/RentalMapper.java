@@ -13,6 +13,7 @@ public interface RentalMapper {
     @Mapping(source = "car.brand",target="carBrand")
     @Mapping(source = "car.model",target = "carModel")
     @Mapping(source = "car.plateNumber",target="plateNumber")
+    @Mapping(source = "car.pricePerMinute", target = "pricePerMinute")
 
     RentalResponseDto toDto(Rental rental);
 }

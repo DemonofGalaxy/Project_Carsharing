@@ -1,11 +1,14 @@
 package demonofgalaxy.project_carsharing.service;
 
+import demonofgalaxy.project_carsharing.dto.rental.RentalResponseDto;
 import demonofgalaxy.project_carsharing.entity.car.Car;
 import demonofgalaxy.project_carsharing.entity.car.CarStatus;
 import demonofgalaxy.project_carsharing.entity.rental.Rental;
 import demonofgalaxy.project_carsharing.entity.rental.RentalStatus;
 import demonofgalaxy.project_carsharing.entity.user.User;
+import demonofgalaxy.project_carsharing.mapper.RentalMapper;
 import demonofgalaxy.project_carsharing.repository.CarRepository;
+import demonofgalaxy.project_carsharing.repository.PaymentRepository;
 import demonofgalaxy.project_carsharing.repository.RentalRepository;
 import demonofgalaxy.project_carsharing.repository.UserRepository;
 import demonofgalaxy.project_carsharing.strategy.TariffCalculatorStrategy;
@@ -44,16 +47,18 @@ class RentalServiceTest {
     private TariffCalculatorStrategy minuteTariffStrategy;
 
     private RentalService rentalService;
+    private PaymentRepository paymentRepository;
 
     private User testUser;
     private Car testCar;
+    private RentalMapper rentalMapper;
 
     @BeforeEach
     void setUp() {
         Map<String, TariffCalculatorStrategy> strategies = Map.of(
                 "minuteTariffStrategy", minuteTariffStrategy
         );
-        rentalService = new RentalService(rentalRepository, carRepository, userRepository, strategies);
+        rentalService = new RentalService(rentalRepository,carRepository,userRepository,strategies,rentalMapper,paymentRepository);
 
         testUser = User.builder()
                 .id(1L)
@@ -79,10 +84,10 @@ class RentalServiceTest {
         when(carRepository.findById(10L)).thenReturn(Optional.of(testCar));
         when(rentalRepository.save(any(Rental.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Rental result = rentalService.startRental(1L, 10L);
+        RentalResponseDto result = rentalService.startRental(1L, 10L);
 
         assertNotNull(result);
-        assertEquals(RentalStatus.ACTIVE, result.getStatus());
+        assertEquals(RentalStatus.ACTIVE, result.status());
         assertEquals(CarStatus.IN_USE, testCar.getStatus());
         verify(carRepository).save(testCar);
         verify(rentalRepository).save(any(Rental.class));
@@ -100,7 +105,7 @@ class RentalServiceTest {
     @Test
     @DisplayName("Ошибка старта: пользователь заблокирован (isActive = false)")
     void startRental_ThrowsException_WhenUserIsBlocked() {
-        testUser.setActive(false);
+        testUser.setIsActive(false);
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
         assertThrows(IllegalStateException.class, () -> rentalService.startRental(1L, 10L));
@@ -144,10 +149,10 @@ class RentalServiceTest {
         when(minuteTariffStrategy.finalPrice(any(), anyLong())).thenReturn(BigDecimal.valueOf(10.00));
         when(rentalRepository.save(any(Rental.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Rental completed = rentalService.endRental(100L, "minuteTariffStrategy");
+        RentalResponseDto completed = rentalService.endRental(100L, "minuteTariffStrategy");
 
-        assertEquals(RentalStatus.COMPLETED, completed.getStatus());
-        assertEquals(BigDecimal.valueOf(10.00), completed.getTotalPrice());
+        assertEquals(RentalStatus.COMPLETED, completed.status());
+        assertEquals(BigDecimal.valueOf(10.00), completed.totalPrice());
         assertEquals(CarStatus.AVAILABLE, testCar.getStatus());
         verify(carRepository).save(testCar);
         verify(rentalRepository).save(activeRental);
@@ -201,9 +206,9 @@ class RentalServiceTest {
         when(minuteTariffStrategy.finalPrice(any(), anyLong())).thenReturn(BigDecimal.valueOf(0.50));
         when(rentalRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        Rental result = rentalService.endRental(100L, "minuteTariffStrategy");
+        RentalResponseDto result = rentalService.endRental(100L, "minuteTariffStrategy");
 
         verify(minuteTariffStrategy).finalPrice(any(), anyLong());
-        assertEquals(BigDecimal.valueOf(0.50), result.getTotalPrice());
+        assertEquals(BigDecimal.valueOf(0.50), result.totalPrice());
     }
 }

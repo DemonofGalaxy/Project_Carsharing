@@ -1,10 +1,13 @@
 package demonofgalaxy.project_carsharing.service;
 
+import demonofgalaxy.project_carsharing.dto.rental.RentalResponseDto;
 import demonofgalaxy.project_carsharing.entity.car.Car;
 import demonofgalaxy.project_carsharing.entity.car.CarStatus;
 import demonofgalaxy.project_carsharing.entity.rental.Rental;
 import demonofgalaxy.project_carsharing.entity.rental.RentalStatus;
+import demonofgalaxy.project_carsharing.mapper.RentalMapper;
 import demonofgalaxy.project_carsharing.repository.CarRepository;
+import demonofgalaxy.project_carsharing.repository.PaymentRepository;
 import demonofgalaxy.project_carsharing.repository.RentalRepository;
 import demonofgalaxy.project_carsharing.repository.UserRepository;
 import demonofgalaxy.project_carsharing.strategy.MinuteTariffStrategy;
@@ -33,18 +36,25 @@ class RentalIntegrationTest {
     private CarRepository carRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private RentalMapper rentalMapper;
+    @Mock
+    private PaymentRepository paymentRepository;
+    @Mock
+    private Map<String,TariffCalculatorStrategy> strategies;
 
     @Test
     @DisplayName("Интеграционный тест: взаимодействие RentalService с реальным компонентом MinuteTariffStrategy")
     void testRentalService_WithRealStrategyComponent() {
-        // ИСПОЛЬЗУЕМ НАСТОЯЩИЙ РЕАЛЬНЫЙ ОБЪЕКТ СТРАТЕГИИ (не мок!)
         TariffCalculatorStrategy realStrategy = new MinuteTariffStrategy();
 
         RentalService service = new RentalService(
                 rentalRepository,
                 carRepository,
                 userRepository,
-                Map.of("minuteTariffStrategy", realStrategy)
+                strategies,
+                rentalMapper,
+                paymentRepository
         );
 
         Car car = Car.builder()
@@ -62,12 +72,11 @@ class RentalIntegrationTest {
         when(rentalRepository.findById(1L)).thenReturn(Optional.of(rental));
         when(rentalRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        // Выполняем расчет через реальный калькулятор
-        Rental completed = service.endRental(1L, "minuteTariffStrategy");
+        RentalResponseDto completed = service.endRental(1L, "minuteTariffStrategy");
 
         // 15 минут * 0.40 = 6.00 руб
-        assertEquals(0, BigDecimal.valueOf(6.00).compareTo(completed.getTotalPrice()));
-        assertEquals(RentalStatus.COMPLETED, completed.getStatus());
+        assertEquals(0, BigDecimal.valueOf(6.00).compareTo(completed.totalPrice()));
+        assertEquals(RentalStatus.COMPLETED, completed.status());
         assertEquals(CarStatus.AVAILABLE, car.getStatus());
     }
 }

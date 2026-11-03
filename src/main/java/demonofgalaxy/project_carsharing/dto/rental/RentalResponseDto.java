@@ -13,6 +13,7 @@ public record RentalResponseDto(
         String carBrand,
         String carModel,
         String plateNumber,
+        BigDecimal pricePerMinute,
         LocalDateTime startTime,
         LocalDateTime endTime,
         BigDecimal totalPrice,

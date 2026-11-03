@@ -5,8 +5,11 @@ import demonofgalaxy.project_carsharing.dto.maintenance.MaintenanceResponseDto;
 import demonofgalaxy.project_carsharing.entity.car.Car;
 import demonofgalaxy.project_carsharing.entity.car.CarStatus;
 import demonofgalaxy.project_carsharing.entity.maintenance.MaintenanceRecord;
+import demonofgalaxy.project_carsharing.entity.rental.Rental;
+import demonofgalaxy.project_carsharing.entity.rental.RentalStatus;
 import demonofgalaxy.project_carsharing.repository.CarRepository;
 import demonofgalaxy.project_carsharing.repository.MaintenanceRecordRepository;
+import demonofgalaxy.project_carsharing.repository.RentalRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +27,45 @@ public class MaintenanceService {
 
     private final MaintenanceRecordRepository maintenanceRepository;
     private final CarRepository carRepository;
+    private final RentalRepository rentalRepository; // ВНЕДРИЛИ РЕПОЗИТОРИЙ АРЕНДЫ!
 
     @Transactional
     public MaintenanceResponseDto startMaintenance(MaintenanceCreateDto dto) {
         Car car = carRepository.findById(dto.carId())
-                .orElseThrow(() -> new NoSuchElementException("Car with id " + dto.carId() + " not found"));
+                .orElseThrow(() -> new NoSuchElementException("Автомобиль с ID " + dto.carId() + " не найден"));
 
-        if (car.getStatus() == CarStatus.IN_USE) {
-            throw new IllegalStateException("Cannot send car to maintenance while it is IN_USE");
+        // 1. Проверка: не деактивирован ли автомобиль
+        if (!car.getIsActive()) {
+            throw new IllegalStateException("Нельзя отправить на СТО: автомобиль заблокирован или выведен из эксплуатации");
         }
 
+        // 2. Проверка: не на СТО ли он уже
+        if (car.getStatus() == CarStatus.MAINTENANCE) {
+            throw new IllegalStateException("Автомобиль уже находится на сервисном обслуживании в ремонтной зоне");
+        }
+
+        // 3. Проверка статуса: не в поездке ли он
+        if (car.getStatus() == CarStatus.IN_USE) {
+            throw new IllegalStateException("Нельзя отправить на СТО: автомобиль сейчас находится в активной поездке у клиента!");
+        }
+
+        // 4. Проверка статуса: не забронирован ли он
+        if (car.getStatus() == CarStatus.RESERVED) {
+            throw new IllegalStateException("Нельзя отправить на СТО: автомобиль забронирован клиентом и ожидает посадки!");
+        }
+
+        // 5. ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА ПО ТАБЛИЦЕ АРЕНДЫ (на случай рассинхрона):
+        // Проверяем, нет ли в базе незавершенных аренд со статусом ACTIVE или RESERVED для этой машины
+        boolean hasActiveOrReservedRental = rentalRepository.findAll().stream()
+                .anyMatch(r -> r.getCar() != null
+                        && r.getCar().getId().equals(car.getId())
+                        && (r.getStatus() == RentalStatus.ACTIVE || r.getStatus() == RentalStatus.RESERVED));
+
+        if (hasActiveOrReservedRental) {
+            throw new IllegalStateException("Нельзя отправить на СТО: в системе зафиксирована незавершенная аренда или бронь для данного автомобиля!");
+        }
+
+        // Переводим машину в статус ТО
         car.setStatus(CarStatus.MAINTENANCE);
         carRepository.save(car);
 
@@ -53,10 +85,10 @@ public class MaintenanceService {
     @Transactional
     public MaintenanceResponseDto completeMaintenance(Long recordId, BigDecimal actualCost) {
         MaintenanceRecord record = maintenanceRepository.findById(recordId)
-                .orElseThrow(() -> new NoSuchElementException("Maintenance record not found"));
+                .orElseThrow(() -> new NoSuchElementException("Заказ-наряд ТО с ID " + recordId + " не найден"));
 
         if (Boolean.TRUE.equals(record.getIsCompleted())) {
-            throw new IllegalStateException("Maintenance is already completed");
+            throw new IllegalStateException("Данный заказ-наряд уже был закрыт ранее");
         }
 
         record.setEndDate(LocalDateTime.now());
@@ -65,6 +97,7 @@ public class MaintenanceService {
             record.setCost(actualCost);
         }
 
+        // Возвращаем машину на линию
         Car car = record.getCar();
         car.setStatus(CarStatus.AVAILABLE);
         carRepository.save(car);

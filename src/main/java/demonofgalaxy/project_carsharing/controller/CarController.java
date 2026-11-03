@@ -65,4 +65,10 @@ public class CarController {
     CarResponseDto carDto=carService.deactivateCar(carId);
     return ResponseEntity.ok(carDto);
 }
+
+    @PatchMapping("/{carId}/activate")
+    public ResponseEntity<CarResponseDto> activateCar(@PathVariable Long carId) {
+        CarResponseDto carDto = carService.activateCar(carId);
+        return ResponseEntity.ok(carDto);
+    }
 }
