@@ -37,4 +37,18 @@ public class RentalController {
         List<RentalResponseDto> history=rentalService.getHistoryByUserId(userId);
        return ResponseEntity.ok(history);
     }
+
+    // 1. Ручка бронирования: POST http://localhost:8080/api/rentals/reserve?userId=1&carId=1
+    @PostMapping("/reserve")
+    public ResponseEntity<RentalResponseDto> reserveCar(@RequestParam Long userId, @RequestParam Long carId) {
+        RentalResponseDto dto = rentalService.reserveCar(userId, carId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    }
+
+    // 2. Ручка отмены брони: PATCH http://localhost:8080/api/rentals/1/cancel?userId=1
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<RentalResponseDto> cancelReservation(@PathVariable Long id, @RequestParam Long userId) {
+        RentalResponseDto dto = rentalService.cancelReservation(id, userId);
+        return ResponseEntity.ok(dto);
+    }
 }

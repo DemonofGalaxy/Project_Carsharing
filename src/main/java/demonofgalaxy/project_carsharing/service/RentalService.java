@@ -5,12 +5,15 @@ import demonofgalaxy.project_carsharing.dto.user.UserLoginDto;
 import demonofgalaxy.project_carsharing.dto.user.UserResponseDto;
 import demonofgalaxy.project_carsharing.entity.car.Car;
 import demonofgalaxy.project_carsharing.entity.car.CarStatus;
+import demonofgalaxy.project_carsharing.entity.payment.Payment;
+import demonofgalaxy.project_carsharing.entity.payment.PaymentStatus;
 import demonofgalaxy.project_carsharing.entity.rental.Rental;
 import demonofgalaxy.project_carsharing.entity.rental.RentalStatus;
 import demonofgalaxy.project_carsharing.entity.user.User;
 import demonofgalaxy.project_carsharing.mapper.RentalMapper;
 import demonofgalaxy.project_carsharing.mapper.UserMapper;
 import demonofgalaxy.project_carsharing.repository.CarRepository;
+import demonofgalaxy.project_carsharing.repository.PaymentRepository;
 import demonofgalaxy.project_carsharing.repository.RentalRepository;
 import demonofgalaxy.project_carsharing.repository.UserRepository;
 import demonofgalaxy.project_carsharing.strategy.TariffCalculatorStrategy;
@@ -37,6 +40,7 @@ public class RentalService {
     private final UserRepository userRepository;
     private final Map<String, TariffCalculatorStrategy> strategies;
     private final RentalMapper rentalMapper;
+    private final PaymentRepository paymentRepository;
 
 
     @Transactional
@@ -102,6 +106,16 @@ public class RentalService {
         carRepository.save(car);
         Rental rentalSave = rentalRepository.save(rentalFind);
         log.info("Rent ID={} is completed. The final cost: {} bel rub", rentalId, check);
+
+        Payment payment = Payment.builder()
+                .rental(rentalSave)
+                .amount(check)
+                .paymentTime(endTime)
+                .paymentMethod("CREDIT_CARD")
+                .status(PaymentStatus.PAID)
+                .build();
+        paymentRepository.save(payment);
+        log.info("Payment ID={} recorded for rental ID={}", payment.getId(), rentalId);
         return rentalMapper.toDto(rentalSave);
     }
 
