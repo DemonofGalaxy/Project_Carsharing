@@ -16,5 +16,8 @@ List<Rental> findAllByStatus(RentalStatus status);
     List<Rental> findByUserIdAndStatus(Long userId, RentalStatus status);
     List<Rental> findAllByStatusAndStartTimeBefore(RentalStatus status, LocalDateTime time);
     Optional<Rental> findByUserIdAndCarIdAndStatus(Long userId,Long carId,RentalStatus status);
+    boolean existsByCarIdAndStatusIn(Long carId, List<RentalStatus> statuses);
+
+    long countByUserIdAndStatus(Long userId, RentalStatus status);
 }
 

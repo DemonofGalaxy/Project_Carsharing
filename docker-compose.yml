@@ -5,7 +5,7 @@ services:
     image: postgres:16-alpine
     container_name: carsharing-db
     environment:
-      POSTGRES_DB: bank_database
+      POSTGRES_DB: carsharing_db
       POSTGRES_USER: admin_user
       POSTGRES_PASSWORD: MeiN_HErz_BRennt
     ports:

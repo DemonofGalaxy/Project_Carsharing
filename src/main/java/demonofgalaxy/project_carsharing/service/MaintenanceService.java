@@ -56,13 +56,13 @@ public class MaintenanceService {
 
         // 5. ЖЕЛЕЗОБЕТОННАЯ ПРОВЕРКА ПО ТАБЛИЦЕ АРЕНДЫ (на случай рассинхрона):
         // Проверяем, нет ли в базе незавершенных аренд со статусом ACTIVE или RESERVED для этой машины
-        boolean hasActiveOrReservedRental = rentalRepository.findAll().stream()
-                .anyMatch(r -> r.getCar() != null
-                        && r.getCar().getId().equals(car.getId())
-                        && (r.getStatus() == RentalStatus.ACTIVE || r.getStatus() == RentalStatus.RESERVED));
+        boolean isCarBusy = rentalRepository.existsByCarIdAndStatusIn(
+                car.getId(),
+                List.of(RentalStatus.ACTIVE, RentalStatus.RESERVED)
+        );
 
-        if (hasActiveOrReservedRental) {
-            throw new IllegalStateException("Нельзя отправить на СТО: в системе зафиксирована незавершенная аренда или бронь для данного автомобиля!");
+        if (isCarBusy) {
+            throw new IllegalStateException("Нельзя отправить на СТО: для автомобиля существует активная сессия аренды или бронирования!");
         }
 
         // Переводим машину в статус ТО

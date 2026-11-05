@@ -92,31 +92,46 @@ public class RentalService {
 
     @Transactional
     public RentalResponseDto endRental(Long rentalId, String tariffName) {
-        Rental rentalFind = rentalRepository.findById(rentalId).orElseThrow(() -> new NoSuchElementException("Rental is not found"));
-        if (rentalFind.getStatus() != RentalStatus.ACTIVE) throw new IllegalArgumentException("The rental is over yet");
+        Rental rentalFind = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new NoSuchElementException("Rental is not found"));
+        if (rentalFind.getStatus() != RentalStatus.ACTIVE) {
+            throw new IllegalArgumentException("The rental is over yet");
+        }
+
         LocalDateTime endTime = LocalDateTime.now();
         long realTime = Duration.between(rentalFind.getStartTime(), endTime).toMinutes();
+        if (realTime <= 0) {
+            realTime = 1; // минимальная тарификация 1 минута
+        }
 
-        if(realTime<=0) realTime=1;
-        TariffCalculatorStrategy strategy = strategies.get(tariffName);
-        if (strategy == null) throw new IllegalArgumentException("Unknown strategy");
+        // БЭКЕНД САМ ОПРЕДЕЛЯЕТ ЛОЯЛЬНОСТЬ:
+        // Если у пользователя >= 3 поездок — включаем DiscountTariffStrategy со скидкой 10%
+        long completedRides = rentalRepository.countByUserIdAndStatus(rentalFind.getUser().getId(), RentalStatus.COMPLETED);
+        String finalStrategyName = (completedRides >= 3) ? "discountTariffStrategy" : "minuteTariffStrategy";
+
+        TariffCalculatorStrategy strategy = strategies.get(finalStrategyName);
+        if (strategy == null) {
+            strategy = strategies.get("minuteTariffStrategy");
+        }
+
         BigDecimal check = strategy.finalPrice(rentalFind.getCar().getPricePerMinute(), realTime);
         rentalFind.setEndTime(endTime);
         rentalFind.setTotalPrice(check);
         rentalFind.setStatus(RentalStatus.COMPLETED);
-        Car car = rentalFind.getCar();
+
+        // Пробег
         int drivenKm = (int) Math.max(1, realTime);
-        int currentCarMileage = (car.getMileAge() != null) ? car.getMileAge() : 0;
-        int finalMileage = currentCarMileage + drivenKm;
-
+        Car car = rentalFind.getCar();
+        int currentMileage = (car.getMileAge() != null) ? car.getMileAge() : 0;
+        int finalMileage = currentMileage + drivenKm;
         car.setMileAge(finalMileage);
-
         rentalFind.setEndMileage(finalMileage);
+
         car.setStatus(CarStatus.AVAILABLE);
         carRepository.save(car);
         Rental rentalSave = rentalRepository.save(rentalFind);
-        log.info("Rent ID={} is completed. The final cost: {} bel rub", rentalId, check);
 
+        // Автоматический платеж (Таблица 5)
         Payment payment = Payment.builder()
                 .rental(rentalSave)
                 .amount(check)
@@ -125,7 +140,9 @@ public class RentalService {
                 .status(PaymentStatus.PAID)
                 .build();
         paymentRepository.save(payment);
-        log.info("Payment ID={} recorded for rental ID={}", payment.getId(), rentalId);
+
+        log.info("Rent ID={} completed. User had {} rides, applied strategy: {}, cost: {} BYN",
+                rentalId, completedRides, finalStrategyName, check);
         return rentalMapper.toDto(rentalSave);
     }
 
